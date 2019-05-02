@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import Message from './js/Message'
+import Message from './client/Message'
 
 import './css/style.css'
 
