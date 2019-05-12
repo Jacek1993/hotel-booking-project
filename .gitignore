@@ -5,3 +5,5 @@ dist
 Coverage
 coverage
 .idea
+src/server/logs/app.log
+src/server/uploads/

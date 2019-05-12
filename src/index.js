@@ -6,7 +6,7 @@ import './css/style.css'
 
 ReactDOM.render(
   <Message />,
-  document.getElementById('react-container') // eslint-disable-line no-undef
+  document.getElementById('root') // eslint-disable-line no-undef
 )
 
 if(module.hot) // eslint-disable-line no-undef  

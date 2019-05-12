@@ -1,0 +1,24 @@
+
+{
+  "test":{
+    "PORT": 3000,
+    "MONGODB_URI": "mongodb://localhost:27017/Booking",
+    "OWNER_PASSWORD": "$2a$10$QhYFdAemDjroF8j6pbChSuxUf8g2dnhYdjzzkSobB0gI8D..EVZDW",
+    "POSSIBLE": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
+    "OWNER_EMAIL": "mati@mati.hub.pl",
+    "SENDGRID_API_KEY": "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",
+    "ROOT_URL": "http://localhost:3000",
+    "PAYLOAD_AUTH": "auth"
+  },
+  "development":{
+    "PORT":3000,
+    "MONGODB_URI": "mongodb://localhost:27017/Booking",
+    "OWNER_PASSWORD": "$2a$10$QhYFdAemDjroF8j6pbChSuxUf8g2dnhYdjzzkSobB0gI8D..EVZDW",
+    "POSSIBLE": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
+    "OWNER_EMAIL": "mati@mati.hub.pl",
+    "SENDGRID_API_KEY": "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",
+    "ROOT_URL": "http://localhost:3000",
+    "PAYLOAD_AUTH": "auth"
+  }
+}
+
