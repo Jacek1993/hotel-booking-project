@@ -12,10 +12,6 @@ const create=({firstName, lastName, email, password })=>sendRequest(`/client/sig
      method: 'DELETE'
  });
 
- const profileImage=()=>sendRequest(`/client/profile/image`,{
-     method: 'GET'
- });
-
  const userCredentials=(slug)=>sendRequest(`/client/${slug}`,{
      method: 'GET'
  });
@@ -25,6 +21,5 @@ export {
     create,
     signin,
     signOut,
-    profileImage,
     userCredentials
 }

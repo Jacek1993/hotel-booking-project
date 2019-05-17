@@ -50,7 +50,9 @@ app.route('/something')
 });
 
 app.get('/checkToken', authenticate, (req, res)=>{
-    res.sendStatus(200);
+    res.sendStatus(200).json({
+        slug: req.client.slug
+    })
 });
 
 // app.get('*', (req, res, next) => {

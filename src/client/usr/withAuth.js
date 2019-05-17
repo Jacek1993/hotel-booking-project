@@ -4,16 +4,17 @@ import {Redirect} from 'react-router-dom';
 export default function withAuth(ComponentToProtect) {
 
     return class extends Component {
-        constructor({match}) {
-            super();
+        constructor(props) {
+            super(props);
             this.state = {
                 status: true,
                 redirect: false
             };
-            this.match=match;
+            console.log(props.match.params);
         }
 
         componentDidMount() {
+            console.log(this.props.match.params.slug);
             fetch('/checkToken')
                 .then(res => {
                     if (res.status === 200) {

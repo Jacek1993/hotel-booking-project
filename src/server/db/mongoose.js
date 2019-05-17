@@ -4,6 +4,7 @@ import GridFsStream from 'gridfs-stream';
 import  GridFsStorage from 'multer-gridfs-storage';
 import  crypto from'crypto';
 import path from 'path';
+import {Client} from "../models/Client";
 
 
 mongoose.Promise = global.Promise;
@@ -59,23 +60,26 @@ const deleteFile = (filename) => {
 };
 
 const getOneFile = (req, res) => {
+    Client.findOne({slug: req.params.avatar}, (err, client)=>{
 
-    gfs.files.findOne({filename: req.client.photography}, (err, file) => {
-        if (! file || file.length===0) {
-            return res.status(404).json({
-                error: 'Image not found'
-            })
-        }
-        if(file.contentType==='image/jpeg' || file.contentType==='image/png'){
-            const readStream=gfs.createReadStream(file.filename);
-            readStream.pipe(res)
-        }
-        else{
-            res.status(404).json({
-                error: 'It is not an image'
-            })
-        }
+        gfs.files.findOne({filename: client.photography}, (err, file) => {
+            if (! file || file.length===0) {
+                return res.status(404).json({
+                    error: 'Image not found'
+                })
+            }
+            if(file.contentType==='image/jpeg' || file.contentType==='image/png'){
+                const readStream=gfs.createReadStream(file.filename);
+                readStream.pipe(res)
+            }
+            else{
+                res.status(404).json({
+                    error: 'It is not an image'
+                })
+            }
+        });
     });
+
 
 };
 

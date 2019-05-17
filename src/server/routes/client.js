@@ -112,9 +112,11 @@ router.get('/:slug',authenticate, async (req, res) => {
         console.log('slug  ', slug);
         let client = await Client.findOne({slug: slug});
 
-        res.status(200).send({email: client.email, firstName: client.firstName, lastName: client.lastName, reservation: client.reservation})
+        res.status(200).json({email: client.email, firstName: client.firstName, lastName: client.lastName, reservation: client.reservation})
     } catch (e) {
-        res.status(400).send(`Bad credentials client with slug: ${e} doesn't exsits`)
+        res.status(400).json({
+            error: `Bad credentials client with slug: ${e} doesn't exsits`
+        })
     }
 });
 
@@ -143,8 +145,8 @@ router.post('/upload',  authenticate ,upload.single('file'), (req, res) => {
     // console.log(${JSON.stringify(req.file});
 });
 
-router.route('/profile/image')
-    .get(authenticate, getOneFile);
+router.route('/profile/image/:avatar')
+    .get( getOneFile);
 
 
 export default router;

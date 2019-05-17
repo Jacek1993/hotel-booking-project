@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types'
 import {withStyles} from 'material-ui/styles'
 import Paper from 'material-ui/Paper'
@@ -39,42 +39,53 @@ class Secret extends Component {
     constructor({match}) {
         super();
         this.state = {
-           user: '',
-            image: ''
+            user: '',
+            image: '',
+            slug: ''
         };
-        this.match=match;
+
     }
 
-    init=(slug)=>{
-        userCredentials(slug).then(response=>{
-            if(!response.error){
+    init = (slug) => {
+        console.log('this may cause error  ' + slug);
+        userCredentials(slug).then(response => {
+            console.log(response)
+            if (!response.error) {
                 this.setState({user: response});
+                console.log('After init')
             }
+
         })
 
-        profileImage().then(response=>{
-            if(!response.error){
+        console.log(JSON.stringify(this.state.user));
 
-            }
-            console.log(response);
-        })
+
     }
 
-    componentWillReceiveProps(props){
-        this.init(props.match.params.slug);
+    componentWillReceiveProps(props) {
+        let param1 = Object.keys(props.match.params);
+        this.setState({slug: param1[0]});
+        if (this.state.slug) {
+            this.init(this.state.slug);
+        }
     };
 
-
-
-    componentDidMount() {
-        this.init(this.match.params.slug);
+    shouldComponentUpdate(nextProps, nextState) {
+        return this.state.slug;
     }
 
+
     render() {
+        const {user}=this.state
         return (
             <div>
                 <h1>Secret</h1>
-                <p>{this.state.message}</p>
+                <p>{JSON.stringify(user)}</p>
+                {
+                    this.state.slug &&
+                    <img src={`/client/profile/image/${this.state.slug}`} alt=""/>
+                }
+
             </div>
         );
     }

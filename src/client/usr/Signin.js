@@ -36,13 +36,18 @@ const styles = theme => ({
 })
 
 class Signin extends Component {
-    state = {
-        email: '',
-        password: '',
-        error: '',
-        slug: '',
-        redirectToReferrer: false
+
+    constructor(props){
+        super(props);
+        this.state = {
+            email: '',
+            password: '',
+            error: '',
+            slug: '',
+            redirectToReferrer: false
+        };
     }
+
 
     clickSubmit = () => {
         const user = {
@@ -56,7 +61,11 @@ class Signin extends Component {
                this.setState({error: response.error});
            }else{
                this.state.slug=user.slug=response.slug;
+
                this.props.history.push(`/client/${user.slug}`);
+
+                //last line of code is a callback which sends data to it's parent
+               this.props.slugCallback(user.slug);
            }
 
        });

@@ -34,16 +34,32 @@ class MenuShow extends Component {
         history: PropTypes.object.isRequired
     };
 
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
-            status: false
+            status: false,
+            slug: ''
         }
     }
 
     componentDidMount() {
+
        isAuthenticated(this);
 
+    }
+
+    componentWillReceiveProps(nextProps){
+        console.log(nextProps)
+        if(nextProps.slug!=='') {
+            const slug=nextProps.slug;
+            this.setState({slug: nextProps.slug})
+        }
+        console.log(this.state.slug);
+    }
+
+    //this function prevents from changing state if it is empty because react renders complete DOM tree for any changes
+    shouldComponentUpdate(nextProps, nextState){
+        return !!nextProps.slug;
     }
 
 
@@ -84,7 +100,7 @@ class MenuShow extends Component {
                                       submit();
                                       this.props.history.push('/');
                                   }}>Sign out</Button>
-                                  <Link to="/secret/mati">
+                                  <Link to={`/secret/${this.state.slug}`}>
                             <Button style={isActive(this.props.history, "/signin")}>Secret
                             </Button>
                             </Link>
