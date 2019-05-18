@@ -1,18 +1,22 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types'
-import {withStyles} from 'material-ui/styles'
-import Paper from 'material-ui/Paper'
-import List, {ListItem, ListItemAvatar, ListItemSecondaryAction, ListItemText} from 'material-ui/List'
-import Avatar from 'material-ui/Avatar'
-import IconButton from 'material-ui/IconButton'
-import Button from 'material-ui/Button'
-import Typography from 'material-ui/Typography'
-import Edit from 'material-ui-icons/Edit'
-import Person from 'material-ui-icons/Person'
-import Divider from 'material-ui/Divider'
+import {withStyles} from '@material-ui/core/styles'
+import Paper from '@material-ui/core/Paper'
+import List from '@material-ui/core/List'
+import ListItem from '@material-ui/core/ListItem'
+import ListItemAvatar from '@material-ui/core/ListItemAvatar'
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
+import ListItemText from '@material-ui/core/ListItemText'
+import Avatar from '@material-ui/core/Avatar'
+import IconButton from '@material-ui/core/IconButton'
+import Button from '@material-ui/core/Button'
+import Typography from '@material-ui/core/Typography'
+import Edit from '@material-ui/icons/Edit'
+import Person from '@material-ui/icons/Person'
+import Divider from '@material-ui/core/Divider'
 import {Redirect, Link} from 'react-router-dom'
 import {isAuthenticated} from './api/auth-helper';
-import {profileImage, userCredentials} from './api/api-user';
+import { userCredentials} from './api/api-user';
 
 
 const styles = theme => ({
@@ -40,8 +44,8 @@ class Secret extends Component {
         super();
         this.state = {
             user: '',
-            image: '',
-            slug: ''
+            slug: '',
+            status:false
         };
 
     }
@@ -62,12 +66,16 @@ class Secret extends Component {
 
     }
 
-    componentWillReceiveProps(props) {
-        let param1 = Object.keys(props.match.params);
+    componentDidMount(){
+        let param1 = Object.keys(this.props.match.params);
         this.setState({slug: param1[0]});
         if (this.state.slug) {
             this.init(this.state.slug);
         }
+    }
+
+    componentWillReceiveProps(props) {
+
     };
 
     shouldComponentUpdate(nextProps, nextState) {
@@ -76,8 +84,54 @@ class Secret extends Component {
 
 
     render() {
-        const {user}=this.state
+        const photoUrl=`/client/profile/image/${this.state.slug}`;
+        const {classes} =this.props;
+
         return (
+            <Paper className={classes.root} elevation={4}>
+                <Typography type="title" className={classes.title}>
+                    Profile
+                </Typography>
+                <List dense>
+                    <ListItem>
+                        {
+                             <ListItemAvatar>
+
+                                < Avatar src={photoUrl} className={classes.bigAvatar}/>
+
+                            </ListItemAvatar>
+                        }
+                        <ListItemText primary={this.state.user.name} secondary={this.state.user.email}/>
+
+                             (<ListItemSecondaryAction>
+                                <Link to={`/user/edit/${this.state.slug}`}>
+                                    <IconButton aria-label="Edit" color="primary">
+                                        <Edit/>
+                                    </IconButton>
+                                </Link>
+                                {/*<DeleteUser userId={this.state.user._id}/>*/}
+                            </ListItemSecondaryAction>)
+                            {/*// : (<FollowProfileButton following={this.state.following} onButtonClick={this.clickFollowButton}/>)*/}
+
+                    </ListItem>
+                    <Divider/>
+                </List>
+                {/*<ProfileTabs user={this.state.user} posts={this.state.posts} removePostUpdate={this.removePost}/>*/}
+            </Paper>
+        )
+
+    }
+}
+
+Secret.propTypes = {
+    classes: PropTypes.object.isRequired
+}
+
+export default withStyles(styles)(Secret)
+
+
+/*
+  return (
             <div>
                 <h1>Secret</h1>
                 <p>{JSON.stringify(user)}</p>
@@ -88,7 +142,4 @@ class Secret extends Component {
 
             </div>
         );
-    }
-}
-
-export default withStyles(styles)(Secret)
+ */

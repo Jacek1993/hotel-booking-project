@@ -6,6 +6,7 @@ import Menu from './core/Menu';
 import Signin from "./usr/Signin";
 import withAuth from "./usr/withAuth";
 import Secret from "./usr/UserProfile";
+import EditProfile from "./usr/EditProfile";
 
 
 class MainRouter extends Component{
@@ -32,6 +33,7 @@ class MainRouter extends Component{
                 <Route path="/signup" component={Signup}/>
                 <Route path="/signin" render={(props)=><Signin {...props} slugCallback={this.SignInCallback.bind(this)} />}/>
                 <Route path={`/secret/:${this.state.slug}`} component={withAuth(Secret)}/>
+                <Route path={`/user/edit/:${this.state.slug}`} component={withAuth(EditProfile)}/>
             </Switch>
         </div>)
     }

@@ -16,10 +16,15 @@ const create=({firstName, lastName, email, password })=>sendRequest(`/client/sig
      method: 'GET'
  });
 
+ const updateUser=({slug, userData})=>sendRequest(`/client/upload/${slug}`, {
+     body:JSON.stringify(userData)
+ });
+
 
 export {
     create,
     signin,
     signOut,
-    userCredentials
+    userCredentials,
+    updateUser
 }

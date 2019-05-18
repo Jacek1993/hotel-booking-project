@@ -112,7 +112,7 @@ router.get('/:slug',authenticate, async (req, res) => {
         console.log('slug  ', slug);
         let client = await Client.findOne({slug: slug});
 
-        res.status(200).json({email: client.email, firstName: client.firstName, lastName: client.lastName, reservation: client.reservation})
+        res.status(200).json({email: client.email, firstName: client.firstName, lastName: client.lastName, reservation: client.reservation, phoneNumber: client.phoneNumber})
     } catch (e) {
         res.status(400).json({
             error: `Bad credentials client with slug: ${e} doesn't exsits`
@@ -120,8 +120,9 @@ router.get('/:slug',authenticate, async (req, res) => {
     }
 });
 
-router.post('/upload',  authenticate ,upload.single('file'), (req, res) => {
-    console.log(` TOKENS ${req.token}`);
+router.post('/upload/:slug',  authenticate ,upload.single('file'), (req, res) => {
+    console.log(` TOKENS ${req.file}`);
+
     Client.findByToken(req.token).then((client) => {
         console.log(client.photography);
         if(client.photography){
