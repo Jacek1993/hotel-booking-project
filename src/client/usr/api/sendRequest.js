@@ -1,4 +1,5 @@
 import getRootUrl from './getRootUrl';
+import axios from "axios";
 
 async function sendRequest(path,options={}){
     const headers=Object.assign({}, options.headers|| {},{
@@ -16,4 +17,7 @@ async function sendRequest(path,options={}){
     return data;
 }
 
+export function sendForm(url, formData){
+    axios.post(`${getRootUrl()}${url}`, formData)
+}
 export default sendRequest;

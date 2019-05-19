@@ -2,6 +2,8 @@ import express from 'express';
 import {ObjectId} from 'mongodb';
 import {deleteFile} from '../db/mongoose';
 import '../config/config';
+import {body, buildCheckFunction, validationResult} from 'express-validator/check'
+
 
 const router = express.Router();
 import {Client} from '../models/Client';
@@ -17,6 +19,7 @@ import errorHandler from '../db/dbErrorHandler'
 
 
 const upload = multer({storage});
+const checkBody=buildCheckFunction(['body']);
 
 
 router.post('/signup', async (req, res) => {
@@ -46,22 +49,22 @@ router.post('/signup', async (req, res) => {
             res.status(200)
                 .cookie('token', token, {httpOnly: true})
                 .json({
-                message: 'Created successfully',
-                slug: client.slug
-            });
+                    message: 'Created successfully',
+                    slug: client.slug
+                });
 
         } else {
             res.status(400)
                 .json({
-                error: 'Given user exists'
-            });
+                    error: 'Given user exists'
+                });
         }
     } catch (e) {
-        console.log(`ERRRORRRRRR ${e}` );
+        console.log(`ERRRORRRRRR ${e}`);
         res.status(400)
             .json({
-            error: errorHandler.getErrorMessage(e)
-        })
+                error: errorHandler.getErrorMessage(e)
+            })
     }
 });
 
@@ -73,7 +76,7 @@ router.post('/login', async (req, res) => {
 
 
         res.status(200)
-            .cookie('token', token, {httpOnly:true})
+            .cookie('token', token, {httpOnly: true})
             .json({
                 message: 'Login successfully',
                 slug: client.slug
@@ -82,8 +85,7 @@ router.post('/login', async (req, res) => {
 
     } catch (e) {
         console.log(e);
-        res.status(400).
-            json({
+        res.status(400).json({
             error: e
         })
     }
@@ -92,27 +94,33 @@ router.post('/login', async (req, res) => {
 router.delete('/me/token', authenticate, async (req, res) => {
     try {
         await req.client.removeToken(req.token);
-        res.clearCookie('token',{path: '/'}).status(200).json({
-           message: 'OK'
+        res.clearCookie('token', {path: '/'}).status(200).json({
+            message: 'OK'
         });
 
     } catch (e) {
-        res.status(400).
-            json({
+        res.status(400).json({
             error: e
         })
     }
 });
 
 
-router.get('/:slug',authenticate, async (req, res) => {
+router.get('/:slug', authenticate, async (req, res) => {
     console.log(req.params.slug);
     try {
         let slug = req.params.slug;
         console.log('slug  ', slug);
         let client = await Client.findOne({slug: slug});
 
-        res.status(200).json({email: client.email, firstName: client.firstName, lastName: client.lastName, reservation: client.reservation, phoneNumber: client.phoneNumber})
+        res.status(200).json({
+            email: client.email,
+            firstName: client.firstName,
+            lastName: client.lastName,
+            reservation: client.reservation,
+            phoneNumber: client.phoneNumber,
+            photography: client.photography
+        })
     } catch (e) {
         res.status(400).json({
             error: `Bad credentials client with slug: ${e} doesn't exsits`
@@ -120,34 +128,51 @@ router.get('/:slug',authenticate, async (req, res) => {
     }
 });
 
-router.post('/upload/:slug',  authenticate ,upload.single('file'), (req, res) => {
-    console.log(` TOKENS ${req.file}`);
+//dziala XD
+//isEmpty it's mean that validator force filed value to be EMPTY
+router.post('/upload/:slug',authenticate,
+    [ checkBody('firstName').isEmpty().withMessage('firstName is required'),
+    checkBody('lastName').isEmpty().withMessage('lastName is required'),
+    checkBody('email').isEmpty().withMessage('email is required'),
+    checkBody('phoneNumber').isEmpty().withMessage('phoneNumber is required')],
+    upload.single('file'), (req, res) => {
 
-    Client.findByToken(req.token).then((client) => {
-        console.log(client.photography);
-        if(client.photography){
-            console.log('something');
-            let error=deleteFile(client.photography);
-
-            if(error){
-                console.log(error);
-                res.status(400).send(error);
-            }
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            console.log(JSON.stringify(errors.array(true)));
+            return res.status(422).json({error: errors.array()})
         }
-        console.log('SAVING  ',JSON.stringify(req.file))
-        client.photography = req.file.filename;
-        client.save();
-        res.status(200).send('OK');
-    }).catch((e) => {
-        res.status(400).send(e);
+        const body=req.body;
+
+        Client.findByToken(req.token).then((client) => {
+            console.log(client.photography);
+            if(client.photography){
+                console.log('something');
+                let error=deleteFile(client.photography);
+
+                if(error){
+                    console.log(error);
+                    res.status(400).send(error);
+                }
+            }
+            console.log('SAVING  ',JSON.stringify(req.file))
+            client.firstName=body.firstName;
+            client.lastName=body.lastName;
+            client.phoneNumber=body.phoneNumber;
+            client.email=body.email;
+            client.photography = req.file.filename;
+            client.save();
+            res.status(200).send('OK');
+        }).catch((e) => {
+            res.status(400).send(e);
+        });
+
+
+        // console.log(${JSON.stringify(req.file});
     });
 
-
-    // console.log(${JSON.stringify(req.file});
-});
-
 router.route('/profile/image/:avatar')
-    .get( getOneFile);
+    .get(getOneFile);
 
 
 export default router;

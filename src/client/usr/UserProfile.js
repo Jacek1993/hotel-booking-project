@@ -17,6 +17,7 @@ import Divider from '@material-ui/core/Divider'
 import {Redirect, Link} from 'react-router-dom'
 import {isAuthenticated} from './api/auth-helper';
 import { userCredentials} from './api/api-user';
+import ProfileTabs from "./ProfileTabs";
 
 
 const styles = theme => ({
@@ -45,7 +46,7 @@ class Secret extends Component {
         this.state = {
             user: '',
             slug: '',
-            status:false
+            status:false,
         };
 
     }
@@ -69,13 +70,13 @@ class Secret extends Component {
     componentDidMount(){
         let param1 = Object.keys(this.props.match.params);
         this.setState({slug: param1[0]});
-        if (this.state.slug) {
-            this.init(this.state.slug);
-        }
+
     }
 
     componentWillReceiveProps(props) {
-
+        if (this.state.slug) {
+            this.init(this.state.slug);
+        }
     };
 
     shouldComponentUpdate(nextProps, nextState) {
@@ -116,7 +117,7 @@ class Secret extends Component {
                     </ListItem>
                     <Divider/>
                 </List>
-                {/*<ProfileTabs user={this.state.user} posts={this.state.posts} removePostUpdate={this.removePost}/>*/}
+                <ProfileTabs  slug={this.state.slug} reservation={this.state.user.reservation}/>
             </Paper>
         )
 
