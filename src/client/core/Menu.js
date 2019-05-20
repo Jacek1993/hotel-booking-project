@@ -5,10 +5,10 @@ import Typography from '@material-ui/core/Typography'
 import IconButton from '@material-ui/core/IconButton'
 import HomeIcon from '@material-ui/icons/Home'
 import Button from '@material-ui/core/Button'
-import {isAuthenticated} from '../usr/api/auth-helper';
 import {Link, withRouter} from 'react-router-dom'
-import {signOut} from "../usr/api/api-user";
+import {signOut} from "../api/api-user";
 import PropTypes from 'prop-types';
+import {isAuthenticated} from '../api/auth-helper'
 
 const isActive = (history, path) => {
     if (history.location.pathname === path)
@@ -16,14 +16,6 @@ const isActive = (history, path) => {
     else
         return {color: '#ffffff'}
 }
-
-const submit = () => {
-    signOut().then(response => {
-        if (!response.error) {
-
-        }
-    })
-};
 
 
 class MenuShow extends Component {
@@ -38,30 +30,40 @@ class MenuShow extends Component {
         super(props);
         this.state = {
             status: false,
-            slug: ''
+            slug: '',
+            role: 'user'
         }
     }
 
     componentDidMount() {
-
-       isAuthenticated(this);
-
+        isAuthenticated(this);
     }
 
-    componentWillReceiveProps(nextProps){
+    componentWillReceiveProps(nextProps) {
         console.log(nextProps)
-        if(nextProps.slug!=='') {
-            const slug=nextProps.slug;
+        if (nextProps.slug !== '') {
+            const slug = nextProps.slug;
             this.setState({slug: nextProps.slug})
+            this.setState({status: true})
+            this.setState({role: nextProps.role})
         }
         console.log(this.state.slug);
     }
 
     //this function prevents from changing state if it is empty because react renders complete DOM tree for any changes
-    shouldComponentUpdate(nextProps, nextState){
-        return !!nextProps.slug;
+    shouldComponentUpdate(nextProps, nextState) {
+        return this.state.status
     }
 
+    submit = () => {
+        signOut().then(response => {
+            if (!response.error) {
+
+            }
+        })
+        this.setState({status: false})
+        this.forceUpdate()
+    };
 
 
     render() {
@@ -77,9 +79,9 @@ class MenuShow extends Component {
                         </IconButton>
                     </Link>
                     <Link to="/users">
-                        <Button style={isActive(this.props.history,'/users')}>Users</Button>
+                        <Button style={isActive(this.props.history, '/users')}>Users</Button>
                     </Link>
-                    <div style={{'position':'absolute', 'right': '10px'}}><span style={{'float': 'right'}}>
+                    <div style={{'position': 'absolute', 'right': '10px'}}><span style={{'float': 'right'}}>
                     {
                         !this.state.status && (<span>
           <Link to="/signup">
@@ -93,11 +95,23 @@ class MenuShow extends Component {
 
         </span>)
                     }
-                    {
-                        this.state.status
-                        && (<span>
+                        {
+                            this.state.role === 'admin'
+                            && (
+                                <span>
+                                    <Link  to="/user/rooms">
+                                    <Button color="inherit" style={isActive(this.props.history, '/user/rooms')}>
+                                        Admin things
+                                    </Button>
+                                    </Link>
+                                </span>
+                            )
+                        }
+                        {
+                            this.state.status
+                            && (<span>
                                   <Button color="inherit" onClick={() => {
-                                      submit();
+                                      this.submit();
                                       this.props.history.push('/');
                                   }}>Sign out</Button>
                                   <Link to={`/secret/${this.state.slug}`}>
@@ -105,7 +119,7 @@ class MenuShow extends Component {
                             </Button>
                             </Link>
                                 </span>)
-                    }
+                        }
                     </span></div>
                 </Toolbar>
             </AppBar>

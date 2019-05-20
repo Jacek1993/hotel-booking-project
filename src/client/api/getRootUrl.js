@@ -5,4 +5,8 @@ function getRootUrl(){
 
 }
 
+export function getRoomImageURL(){
+    return getRootUrl()+'/room/image'
+}
+
 export default getRootUrl;

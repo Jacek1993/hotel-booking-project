@@ -1,10 +1,19 @@
 const isAuthenticated = (state) => {
     fetch('/checkToken')
         .then(res => {
-            if (res.status === 200) {
+
+            if (res.status <=202) {
 
                 state.setState({status: true});
-            } else {
+                console.log('how my i')
+                if(res.status===202){
+                    state.setState({admin: true});
+
+                }else{
+                    state.setState({admin: false});                }
+
+            }
+            else {
                 state.setState({status: false})
             }
         })
@@ -13,6 +22,7 @@ const isAuthenticated = (state) => {
             state.setState({status: false});
         });
 };
+
 
 export {
     isAuthenticated

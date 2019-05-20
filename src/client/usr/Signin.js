@@ -8,7 +8,8 @@ import Typography from '@material-ui/core/Typography'
 import Icon from '@material-ui/core/Icon'
 import PropTypes from 'prop-types'
 import {withStyles} from '@material-ui/core/styles'
-import {signin} from  './api/api-user'
+import {signin} from '../api/api-user'
+import Redirect from "react-router-dom/es/Redirect";
 
 
 const styles = theme => ({
@@ -46,7 +47,8 @@ class Signin extends Component {
             password: '',
             error: '',
             slug: '',
-            redirectToReferrer: false
+            redirectToReferrer: false,
+            role: ''
         };
     }
 
@@ -63,11 +65,12 @@ class Signin extends Component {
                this.setState({error: response.error});
            }else{
                this.state.slug=user.slug=response.slug;
+               this.state.role=response.slug;
 
-               this.props.history.push(`/client/${user.slug}`);
-
+               this.setState({redirectToReferrer: true});
                 //last line of code is a callback which sends data to it's parent
-               this.props.slugCallback(user.slug);
+               console.log('SLUG', user.slug)
+               this.props.slugCallback({slug: user.slug, role:response.role });
            }
 
        });
@@ -80,7 +83,9 @@ class Signin extends Component {
 
     render() {
         const {classes} = this.props
-
+        if(this.state.redirectToReferrer){
+            return (<Redirect to={`/secret/${this.state.slug}`}/>)
+        }
         return (
             <Card className={classes.card}>
                 <CardContent>

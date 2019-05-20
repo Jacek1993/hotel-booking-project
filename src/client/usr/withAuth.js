@@ -14,10 +14,9 @@ export default function withAuth(ComponentToProtect) {
         }
 
         componentDidMount() {
-            console.log(this.props.match.params.slug);
             fetch('/checkToken')
                 .then(res => {
-                    if (res.status === 200) {
+                    if (res.status <= 202) {
                         this.setState({loading: false});
                     } else {
                         const error = new Error(res.error);

@@ -1,6 +1,7 @@
 import express from 'express';
 import {ObjectId} from 'mongodb';
 import multer from 'multer';
+import sharp from 'sharp'
 
 const router = express.Router();
 import {Room} from '../models/Room';
@@ -9,7 +10,7 @@ import {authenticate} from '../utils/auth';
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, './uploads/');
+        cb(null, `${process.cwd()}/src/img`);
     },
     filename: function (req, file, cb) {
         cb(null, new Date().toISOString() + file.originalname);
@@ -61,7 +62,7 @@ router.put('/image/:roomNumber', authenticate, upload.single('productImage'), as
         if (req.role === 'admin') {
             let roomNumber = req.params.roomNumber.toString();
             console.log('Room ID number', roomNumber);
-            let room = await Room.findOne({roomNumber: roomNumber});
+            let room = await Room.findOne({roomNumber});
             room.picture.push(req.file.path);
             room.save();
             res.status(200).send('Image uploaded');
@@ -71,7 +72,9 @@ router.put('/image/:roomNumber', authenticate, upload.single('productImage'), as
         }
     } catch (e) {
         console.log('Cannot upload image');
-        res.status(400).send(e);
+        res.status(400).json({
+            error: e
+        });
     }
 });
 
@@ -116,7 +119,36 @@ router.delete('/:roomNumber/reservation/:id', authenticate, async (req, res) => 
     }
 });
 
-router.get('/', (req, res)=>{
+router.get('/all', authenticate, async(req, res)=>{
+    try {
+        if (req.role === 'admin') {
+            let rooms = await Room.find({}).select('roomNumber slug pricing picture personAmount description').exec();
+            res.status(200).send(rooms);
+        }
+        else {
+            res.stat(401).json({
+                error: 'You are not authenticated'
+            })
+        }
+    }catch (e) {
+        res.status(400).json({
+            error: e
+        })
+    }
+})
+
+router.get('/:slug', authenticate, async(req, res)=>{
+    try{
+        let room=await Room.find({slug: req.params.slug});
+        res.status(200).send(room);
+    }catch(e){
+        res.status(400).json({
+            error: e
+        })
+    }
+})
+
+router.get('/', (req, res) => {
     res.send({
         success: 'udalo sie w koncu'
     });

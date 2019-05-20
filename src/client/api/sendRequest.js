@@ -12,6 +12,7 @@ async function sendRequest(path,options={}){
     );
 
     const data=await response.json();
+    console.log('sendRequest')
     console.log(data);
 
     return data;

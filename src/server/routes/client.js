@@ -75,11 +75,13 @@ router.post('/login', async (req, res) => {
         const token = await client.generateAuthToken();
 
 
+
         res.status(200)
             .cookie('token', token, {httpOnly: true})
             .json({
                 message: 'Login successfully',
-                slug: client.slug
+                slug: client.slug,
+                role: client.role
             })
 
 

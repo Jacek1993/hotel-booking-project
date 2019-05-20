@@ -13,11 +13,10 @@ if(env==='development' || env==='test'){
     Object.keys(envConfig).forEach((key)=>{
         process.env[key]=envConfig[key];
     });
-    const DIR_PATH=__dirname.split('dist')[0];
 
         console.info('MONGODB URI', process.env.MONGODB_URI);
-    process.env['PRIVATE_KEY']=fs.readFileSync(DIR_PATH+'src/server/config/private.key', 'utf8');
-    process.env['PUBLIC_KEY']=fs.readFileSync(DIR_PATH+'src/server/config/public.key', 'utf-8');
+    process.env['PRIVATE_KEY']=fs.readFileSync(process.cwd()+'/src/server/config/private.key', 'utf8');
+    process.env['PUBLIC_KEY']=fs.readFileSync(process.cwd()+'/src/server/config/public.key', 'utf-8');
 
 
 }

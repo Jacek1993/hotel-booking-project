@@ -15,6 +15,8 @@ import PropTypes from 'prop-types'
 import {withStyles} from '@material-ui/core/styles'
 import {Link} from 'react-router-dom'
 import moment from 'moment'
+import getRootUrl from "../api/getRootUrl";
+
 
 
 
@@ -73,7 +75,7 @@ class Post extends Component {
 
     }
 
-
+//todo add link to reservation to enable editing
     render() {
         const {classes} = this.props;
         return (
@@ -91,7 +93,7 @@ class Post extends Component {
                     <Typography component="p" className={classes.text}>
                         <ul>
                             {
-                                this.props.reservation.rooms.map((opt, index)=><li key={index}>{opt}</li>)
+                                this.props.reservation.rooms.map((opt, index)=><li key={index}><a href={`${getRootUrl()}/room/isAvailable/${opt}`}>{opt}</a></li>)
                             }
                         </ul>
                     </Typography>

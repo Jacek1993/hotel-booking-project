@@ -8,7 +8,7 @@ import Typography from '@material-ui/core/Typography'
 import Icon from '@material-ui/core/Icon'
 import PropTypes from 'prop-types'
 import {withStyles} from '@material-ui/core/styles'
-import {create} from './api/api-user';
+import {create} from '../api/api-user';
 
 
 const styles = theme => ({

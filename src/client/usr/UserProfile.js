@@ -15,8 +15,8 @@ import Edit from '@material-ui/icons/Edit'
 import Person from '@material-ui/icons/Person'
 import Divider from '@material-ui/core/Divider'
 import {Redirect, Link} from 'react-router-dom'
-import {isAuthenticated} from './api/auth-helper';
-import { userCredentials} from './api/api-user';
+import {isAuthenticated} from '../api/auth-helper';
+import { userCredentials} from '../api/api-user';
 import ProfileTabs from "./ProfileTabs";
 
 
@@ -68,7 +68,9 @@ class Secret extends Component {
     }
 
     componentDidMount(){
+        // console.log('BEFORE SLUGGG', this.props.match.params)
         let param1 = Object.keys(this.props.match.params);
+        // console.log('LSUGGGGG' , param1)
         this.setState({slug: param1[0]});
 
     }

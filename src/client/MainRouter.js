@@ -7,19 +7,22 @@ import Signin from "./usr/Signin";
 import withAuth from "./usr/withAuth";
 import Secret from "./usr/UserProfile";
 import EditProfile from "./usr/EditProfile";
+import MyShops from "./room/MyShops";
 
 
 class MainRouter extends Component{
     constructor(props){
         super(props);
         this.state={
-            slug: ''
+            slug: '',
+            role: ''
         }
     }
 
-    SignInCallback=(slugData)=>{
-        if(slugData) {
-            this.setState({slug: slugData});
+    SignInCallback=(Data)=>{
+        if(Data.slug) {
+            this.setState({slug: Data.slug});
+            this.setState({role:  Data.role})
             console.log(this.state.slug)
         }
     }
@@ -27,13 +30,14 @@ class MainRouter extends Component{
 
     render(){
         return (<div>
-            <Menu slug={this.state.slug}/>
+            <Menu slug={this.state.slug} role={this.state.role}/>
             <Switch>
                 <Route exact path="/" component={Home}/>
                 <Route path="/signup" component={Signup}/>
                 <Route path="/signin" render={(props)=><Signin {...props} slugCallback={this.SignInCallback.bind(this)} />}/>
                 <Route path={`/secret/:${this.state.slug}`} component={withAuth(Secret)}/>
                 <Route path={`/user/edit/:${this.state.slug}`} component={withAuth(EditProfile)}/>
+                <Route path={`/user/rooms`} component={withAuth(MyShops)}/>
             </Switch>
         </div>)
     }

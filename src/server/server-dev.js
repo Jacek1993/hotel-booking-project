@@ -41,7 +41,7 @@ app.use('/room', room);
 app.use('/reservation', reservation);
 app.use('/client', client);
 app.use('opinion', opinion);
-
+app.use('/room/image', express.static(process.cwd()+'/src/img'))
 app.route('/something')
     .get(authenticate, (req,res)=>{
     res.clearCookie('token',{path: '/'}).status(200).json({
@@ -50,7 +50,12 @@ app.route('/something')
 });
 
 app.get('/checkToken', authenticate, (req, res)=>{
-    res.sendStatus(200).json({
+    console.log('checkToken ', req.role);
+    let status;
+    if(req.role==='admin')  status=202;
+    else status=200;
+
+    res.sendStatus(status).json({
         slug: req.client.slug
     })
 });

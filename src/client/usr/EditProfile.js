@@ -10,8 +10,8 @@ import Avatar from '@material-ui/core/Avatar'
 import FileUpload from '@material-ui/icons/FileCopy'
 import PropTypes from 'prop-types'
 import {withStyles} from '@material-ui/core/styles'
-import {userCredentials, updateUser} from "./api/api-user";
-import {sendForm} from "./api/sendRequest";
+import {userCredentials, updateUser} from "../api/api-user";
+import {sendForm} from "../api/sendRequest";
 import Redirect from "react-router-dom/es/Redirect";
 
 const styles = theme => ({
