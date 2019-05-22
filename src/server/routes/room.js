@@ -36,8 +36,10 @@ const upload = multer({
 
 //creating Room
 router.post('/', authenticate, async (req, res) => {
+    console.log(req.body.roomNumber+'This is our body')
     try {
         if (req.role === "admin") {
+            console.log('CREATING ROOM')
             console.log(req.body);
             const room = await Room.add({
                 roomNumber: req.body.roomNumber,
@@ -48,30 +50,40 @@ router.post('/', authenticate, async (req, res) => {
             res.status(200).send(room);
         }
         else {
-            res.status(401).send(`Sorry You don't have privileges`)
+            res.status(401).json({
+                error: `Sorry You don't have privileges`
+            })
         }
     } catch (e) {
-        res.status(400).send(e);
+        res.status(400).json({
+            error: e
+        });
     }
 });
 
 
-router.put('/image/:roomNumber', authenticate, upload.single('productImage'), async (req, res, next) => {
+router.post('/image/:slug', authenticate, upload.array('productImage'), async (req, res, next) => {
 
     try {
         if (req.role === 'admin') {
-            let roomNumber = req.params.roomNumber.toString();
-            console.log('Room ID number', roomNumber);
-            let room = await Room.findOne({roomNumber});
-            room.picture.push(req.file.path);
+            console.log('INT THE IMAGE UPLOAD')
+            let room = await Room.findOne({slug: req.params.slug});
+            console.log(room);
+            console.log('FURETEHER PART OF TASK')
+            console.log(req.files);
+            req.files.forEach((file)=>room.picture.push(file.filename));
             room.save();
-            res.status(200).send('Image uploaded');
+            res.status(200).json({
+                message: 'Image uploaded'
+            });
         }
         else {
-            res.status(401).send(`Sorry You don't have privileges`)
+            res.status(401).json({
+                error: `Sorry You don't have privileges`
+            })
         }
     } catch (e) {
-        console.log('Cannot upload image');
+
         res.status(400).json({
             error: e
         });
@@ -147,6 +159,29 @@ router.get('/:slug', authenticate, async(req, res)=>{
         })
     }
 })
+
+router.delete('/:slug', authenticate, async(req, res)=>{
+    try{
+        if(req.role==='admin') {
+            console.log('DELETING ', req.params.slug)
+            let slug=req.params.slug;
+            await Room.remove({slug: slug})
+            res.status(200).json({
+                message: 'OK'
+            });
+        }
+        else{
+            res.status(401).json({
+                error: 'Sorry you are not authorized to do that'
+            })
+        }
+    }catch(e){
+        res.status(400).json({
+            error: e
+        })
+    }
+})
+
 
 router.get('/', (req, res) => {
     res.send({

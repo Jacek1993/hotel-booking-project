@@ -69,9 +69,9 @@ class Secret extends Component {
 
     componentDidMount(){
         // console.log('BEFORE SLUGGG', this.props.match.params)
-        let param1 = Object.keys(this.props.match.params);
+
         // console.log('LSUGGGGG' , param1)
-        this.setState({slug: param1[0]});
+        this.setState({slug: this.props.match.url});
 
     }
 

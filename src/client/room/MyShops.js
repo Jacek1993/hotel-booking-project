@@ -4,19 +4,18 @@ import {withStyles} from '@material-ui/core/styles'
 import Paper from '@material-ui/core/Paper'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
-import ListItemAvatar from '@material-ui/core/ListItemAvatar'
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
-import ListItemText from '@material-ui/core/ListItemText'
-import Avatar from '@material-ui/core/Avatar'
 import IconButton from '@material-ui/core/IconButton'
 import Icon from '@material-ui/core/Icon'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
-import Edit from '@material-ui/icons/Edit'
 import Divider from '@material-ui/core/Divider'
 import {Redirect, Link} from 'react-router-dom'
 import {loadRoom} from '../api/api-room'
 import CardMedia from "@material-ui/core/CardMedia/CardMedia";
+import Photo from '@material-ui/icons/Photo'
+import DeleteRoom from "./DeleteRoom";
+import Edit from '@material-ui/icons/Edit'
 // import DeleteShop from './DeleteShop'
 
 const styles = theme => ({
@@ -61,8 +60,11 @@ class MyShops extends Component {
             }
         })
     }
-    removeShop = (shop) => {
-        console.log('removeRoom')
+    removeRoom = (room) => {
+        const updatedRooms=this.state.rooms;
+        const index=updatedRooms.indexOf(room);
+        updatedRooms.splice(index,1);
+        this.setState({rooms: updatedRooms});
     }
 
     convertImageUrl = (url) => {
@@ -88,7 +90,7 @@ class MyShops extends Component {
                     <Typography type="title" className={classes.title}>
                         Your Rooms
                         <span className={classes.addButton}>
-                            <Link to="/seller/shop/new">
+                            <Link to="/user/room/new">
                              <Button color="primary" variant="raised">
                                  <Icon className={classes.leftIcon}>add_box</Icon>  New Room
                             </Button>
@@ -114,11 +116,17 @@ class MyShops extends Component {
                          </Typography>
                      </div>
                          <ListItemSecondaryAction>
+                             <Link to={`/user/room/images/${room.slug}`}>
+                                 <IconButton aria-label="Edit" color="primary">
+                                     <Photo/>
+                                 </IconButton>
+                             </Link>
                             <Link to={`/room/${room.slug}`}>
                              <IconButton aria-label="Edit" color="primary">
-                                 <Edit/>
+                                    <Edit/>
                              </IconButton>
-                            </Link>
+                             </Link>
+                             <DeleteRoom room={room} onRemove={this.removeRoom} slug={room.slug}/>
                          </ListItemSecondaryAction>
                      </ListItem>
                                     <Divider/>

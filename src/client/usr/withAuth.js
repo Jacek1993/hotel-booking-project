@@ -10,7 +10,10 @@ export default function withAuth(ComponentToProtect) {
                 status: true,
                 redirect: false
             };
-            console.log(props.match.params);
+
+            this.convertUrl=this.convertUrl.bind(this);
+            props.match.url=this.convertUrl(props.match.url);
+            console.log(props.match.url)
         }
 
         componentDidMount() {
@@ -27,6 +30,14 @@ export default function withAuth(ComponentToProtect) {
                     console.error(err);
                     this.setState({loading: false, redirect: true});
                 });
+        }
+
+        convertUrl = (url) => {
+            if (url === undefined) {
+                return url
+            }
+            let convertedUrl = url.split('/');
+            return convertedUrl[convertedUrl.length - 1];
         }
 
         render() {

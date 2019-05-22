@@ -8,6 +8,9 @@ import withAuth from "./usr/withAuth";
 import Secret from "./usr/UserProfile";
 import EditProfile from "./usr/EditProfile";
 import MyShops from "./room/MyShops";
+import NewRoom from "./room/NewRoom";
+import PhotosUpload from "./room/PhotosUpload";
+
 
 
 class MainRouter extends Component{
@@ -38,6 +41,8 @@ class MainRouter extends Component{
                 <Route path={`/secret/:${this.state.slug}`} component={withAuth(Secret)}/>
                 <Route path={`/user/edit/:${this.state.slug}`} component={withAuth(EditProfile)}/>
                 <Route path={`/user/rooms`} component={withAuth(MyShops)}/>
+                <Route path={`/user/room/new`} component={withAuth(NewRoom)}/>
+                <Route path={`/user/room/images/:slug`} component={withAuth(PhotosUpload)}/>
             </Switch>
         </div>)
     }

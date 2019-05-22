@@ -162,7 +162,9 @@ router.post('/upload/:slug',authenticate,
             client.lastName=body.lastName;
             client.phoneNumber=body.phoneNumber;
             client.email=body.email;
-            client.photography = req.file.filename;
+            if(req.file) {
+                client.photography = req.file.filename;
+            }
             client.save();
             res.status(200).send('OK');
         }).catch((e) => {

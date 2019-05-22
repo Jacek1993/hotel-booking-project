@@ -19,6 +19,11 @@ async function sendRequest(path,options={}){
 }
 
 export function sendForm(url, formData){
+
+    for (let value of formData.values()) {
+        console.log(value);
+    }
+    console.log(getRootUrl()+url)
     axios.post(`${getRootUrl()}${url}`, formData)
 }
 export default sendRequest;

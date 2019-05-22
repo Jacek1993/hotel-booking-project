@@ -4,6 +4,16 @@ const loadRoom=()=>sendRequest(`/room/all`,{
     method: 'GET'
 });
 
+const createRoom=({roomNumber,personAmount, description, pricing })=>sendRequest(`/room/`,{
+    body: JSON.stringify({roomNumber, personAmount , description, pricing})
+});
+
+const removeRoom=(slug)=>sendRequest(`/room/${slug}`, {
+    method: 'DELETE'
+});
+
 export {
-    loadRoom
+    loadRoom,
+    createRoom,
+    removeRoom
 }
