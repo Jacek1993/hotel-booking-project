@@ -21,7 +21,7 @@ const RoomSchema = new mongoose.Schema({
         state: {type: String, default: ""},
         creationTime: {type: Date}
     }],
-    opinions:[{
+    opinions: [{
         type: mongoose.Schema.Types.ObjectId,
         title: {type: String},
         rating: {type: Number},
@@ -166,14 +166,48 @@ class RoomClass {
         await room.reservation.update({slug: slug}, {state: ""});
     }
 
-    async addOpinon({opinion}){
-        let room =this;
-        try{
-            room.opinions=await room.opinions.concat({opinion});
+    async addOpinon({opinion}) {
+        let room = this;
+        try {
+            room.opinions = await room.opinions.concat({opinion});
             await room.save();
-        }catch (e) {
+        } catch (e) {
             throw Error(`Cannot add opinion `);
         }
+    }
+
+    static async findRoomWithReservationAll(undo, startDate, slug) {
+        return await Room.aggregate([{
+            $lookup: {
+                from: 'reservations',
+                localField: 'reservation.slug',
+                foreignField: 'slug',
+                as: 'reservation_table'
+            }
+        },
+            {
+                $match: {
+                    slug: undo
+                }
+            },
+            {
+                $project: {
+                    description: {$cond: [{$eq: ['$slug', slug]}, '$description', '$$REMOVE']},
+                    roomNumber: {$cond: [{$eq: ['$slug',  slug]}, '$roomNumber', '$$REMOVE']},
+                    slug: {$cond: [{$eq: ['$slug',  slug]}, '$slug', '$$REMOVE']},
+                    pricing: {$cond: [{$eq: ['$slug',  slug]}, '$pricing', '$$REMOVE']},
+                    picture: {$cond: [{$eq: ['$slug', slug]}, '$picture', '$$REMOVE']},
+
+                    reservation_table: {
+                        $filter: {
+                            input: "$reservation_table",
+                            cond: {$lte: ["$$this.startDate", new Date(startDate)]}
+                        }
+                    }
+                }
+
+            }
+        ]);
     }
 
 

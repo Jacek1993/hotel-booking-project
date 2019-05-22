@@ -36,7 +36,7 @@ const upload = multer({
 
 //creating Room
 router.post('/', authenticate, async (req, res) => {
-    console.log(req.body.roomNumber+'This is our body')
+    console.log(req.body.roomNumber + 'This is our body')
     try {
         if (req.role === "admin") {
             console.log('CREATING ROOM')
@@ -71,7 +71,7 @@ router.post('/image/:slug', authenticate, upload.array('productImage'), async (r
             console.log(room);
             console.log('FURETEHER PART OF TASK')
             console.log(req.files);
-            req.files.forEach((file)=>room.picture.push(file.filename));
+            req.files.forEach((file) => room.picture.push(file.filename));
             room.save();
             res.status(200).json({
                 message: 'Image uploaded'
@@ -131,7 +131,7 @@ router.delete('/:roomNumber/reservation/:id', authenticate, async (req, res) => 
     }
 });
 
-router.get('/all', authenticate, async(req, res)=>{
+router.get('/all', authenticate, async (req, res) => {
     try {
         if (req.role === 'admin') {
             let rooms = await Room.find({}).select('roomNumber slug pricing picture personAmount description').exec();
@@ -142,44 +142,57 @@ router.get('/all', authenticate, async(req, res)=>{
                 error: 'You are not authenticated'
             })
         }
-    }catch (e) {
+    } catch (e) {
         res.status(400).json({
             error: e
         })
     }
 })
 
-router.get('/:slug', authenticate, async(req, res)=>{
-    try{
-        let room=await Room.find({slug: req.params.slug});
+router.get('/:slug', authenticate, async (req, res) => {
+    try {
+        let room = await Room.find({slug: req.params.slug});
         res.status(200).send(room);
-    }catch(e){
+    } catch (e) {
         res.status(400).json({
             error: e
         })
     }
 })
 
-router.delete('/:slug', authenticate, async(req, res)=>{
-    try{
-        if(req.role==='admin') {
+router.delete('/:slug', authenticate, async (req, res) => {
+    try {
+        if (req.role === 'admin') {
             console.log('DELETING ', req.params.slug)
-            let slug=req.params.slug;
+            let slug = req.params.slug;
             await Room.remove({slug: slug})
             res.status(200).json({
                 message: 'OK'
             });
         }
-        else{
+        else {
             res.status(401).json({
                 error: 'Sorry you are not authorized to do that'
             })
         }
-    }catch(e){
+    } catch (e) {
         res.status(400).json({
             error: e
         })
     }
+})
+
+router.get('/:slug/reservation/:startDate', authenticate, async (req, res) => {
+    try {
+        const undo=req.headers.undo? req.headers.undo : '';
+        let room = await Room.findRoomWithReservationAll(req.params.slug, req.params.startDate, undo);
+        res.status(200).send(room);
+    } catch (e) {
+        res.status(400).json({
+            error: e
+        })
+    }
+
 })
 
 
@@ -188,6 +201,7 @@ router.get('/', (req, res) => {
         success: 'udalo sie w koncu'
     });
 });
+
 
 
 export default router;

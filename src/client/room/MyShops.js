@@ -121,7 +121,7 @@ class MyShops extends Component {
                                      <Photo/>
                                  </IconButton>
                              </Link>
-                            <Link to={`/room/${room.slug}`}>
+                            <Link to={`/room/${room.slug}/reservation/${(new Date()).toISOString()}`}>
                              <IconButton aria-label="Edit" color="primary">
                                     <Edit/>
                              </IconButton>
