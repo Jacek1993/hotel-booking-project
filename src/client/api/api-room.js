@@ -12,8 +12,13 @@ const removeRoom=(slug)=>sendRequest(`/room/${slug}`, {
     method: 'DELETE'
 });
 
+const updateRoom=({slug, roomData})=>sendRequest(`/room/update/${slug}`,{
+    body: JSON.stringify(roomData)
+})
+
 export {
     loadRoom,
     createRoom,
-    removeRoom
+    removeRoom,
+    updateRoom
 }

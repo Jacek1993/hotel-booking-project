@@ -1,11 +1,11 @@
 import express from 'express';
-import {ObjectId} from 'mongodb';
 import multer from 'multer';
-import sharp from 'sharp'
+import {config} from '../../config/serverConfig';
+import fs from 'fs'
+
 
 const router = express.Router();
 import {Room} from '../models/Room';
-import {logger} from '../logs/logger';
 import {authenticate} from '../utils/auth';
 
 const storage = multer.diskStorage({
@@ -163,9 +163,15 @@ router.get('/:slug', authenticate, async (req, res) => {
 router.delete('/:slug', authenticate, async (req, res) => {
     try {
         if (req.role === 'admin') {
-            console.log('DELETING ', req.params.slug)
-            let slug = req.params.slug;
-            await Room.remove({slug: slug})
+            const room = await Room.findOne({slug: req.params.slug});
+            room.picture.forEach((picture) => {
+                fs.unlink(`${config.uploadedFilePath}/${picture}`, (err) => {
+                    if (err) {
+                        throw err;
+                    }
+                })
+            });
+            await room.remove();
             res.status(200).json({
                 message: 'OK'
             });
@@ -184,7 +190,7 @@ router.delete('/:slug', authenticate, async (req, res) => {
 
 router.get('/:slug/reservation/:startDate', authenticate, async (req, res) => {
     try {
-        const undo=req.headers.undo? req.headers.undo : '';
+        const undo = req.headers.undo ? req.headers.undo : '';
         let room = await Room.findRoomWithReservationAll(req.params.slug, req.params.startDate, undo);
         res.status(200).send(room);
     } catch (e) {
@@ -193,6 +199,45 @@ router.get('/:slug/reservation/:startDate', authenticate, async (req, res) => {
         })
     }
 
+});
+
+router.post('/update/:slug', authenticate, async (req, res) => {
+    try {
+        if (req.role === 'admin') {
+            const room = await Room.findOne({slug: req.params.slug});
+            room.description = req.body.description;
+            room.pricing = req.body.pricing;
+            let toDelete = [];
+            req.body.picture.forEach((picture) => {
+                if(!room.picture.includes(picture))
+                toDelete.push(picture);
+            })
+            room.picture = req.body.picture;
+            if (toDelete.length > 0) {
+                toDelete.forEach((picture) => {
+                    fs.unlink(`${config.uploadedFilePath}/${picture}`, (err) => {
+                        if (err) {
+                            throw err;
+                        }
+                    })
+                });
+            }
+            await room.save();
+            res.status(200).json({
+                message: 'OK'
+            })
+
+        } else {
+            res.status(401).json({
+                error: 'You have to have admin privileges'
+            })
+        }
+    }
+    catch (e) {
+        res.status(400).json({
+            error: e
+        })
+    }
 })
 
 
@@ -201,7 +246,6 @@ router.get('/', (req, res) => {
         success: 'udalo sie w koncu'
     });
 });
-
 
 
 export default router;

@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import _ from 'lodash';
-import {logger} from '../logs/logger';
+
 
 
 const RoomSchema = new mongoose.Schema({
@@ -63,7 +63,7 @@ class RoomClass {
 //todo sprawdzic czy dziala poprawnie ta metoda
     async isAvailableRoom({state = 'AVAILABLE'}) {
         console.log('isAvailableRoom function Room Schema ');
-        var room = await this.findOne({"reservation": {state: state}});
+        let room = await this.findOne({"reservation": {state: state}});
 
         console.log(room);
         if (!rooms) return Promise.reject(false);
@@ -192,16 +192,16 @@ class RoomClass {
             },
             {
                 $project: {
-                    description: {$cond: [{$eq: ['$slug', slug]}, '$description', '$$REMOVE']},
-                    roomNumber: {$cond: [{$eq: ['$slug',  slug]}, '$roomNumber', '$$REMOVE']},
-                    slug: {$cond: [{$eq: ['$slug',  slug]}, '$slug', '$$REMOVE']},
-                    pricing: {$cond: [{$eq: ['$slug',  slug]}, '$pricing', '$$REMOVE']},
-                    picture: {$cond: [{$eq: ['$slug', slug]}, '$picture', '$$REMOVE']},
+                    description: {$cond: [{$ne: ['$slug', slug]}, '$description', '$$REMOVE']},
+                    roomNumber: {$cond: [{$ne: ['$slug',  slug]}, '$roomNumber', '$$REMOVE']},
+                    slug: {$cond: [{$ne: ['$slug',  slug]}, '$slug', '$$REMOVE']},
+                    pricing: {$cond: [{$ne: ['$slug',  slug]}, '$pricing', '$$REMOVE']},
+                    picture: {$cond: [{$ne: ['$slug', slug]}, '$picture', '$$REMOVE']},
 
                     reservation_table: {
                         $filter: {
                             input: "$reservation_table",
-                            cond: {$lte: ["$$this.startDate", new Date(startDate)]}
+                            cond: {$gte: ["$$this.startDate", new Date(startDate)]}
                         }
                     }
                 }

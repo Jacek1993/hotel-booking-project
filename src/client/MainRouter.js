@@ -10,6 +10,7 @@ import EditProfile from "./usr/EditProfile";
 import MyShops from "./room/MyShops";
 import NewRoom from "./room/NewRoom";
 import PhotosUpload from "./room/PhotosUpload";
+import EditRoom from "./room/EditRoom";
 
 
 
@@ -43,6 +44,7 @@ class MainRouter extends Component{
                 <Route path={`/user/rooms`} component={withAuth(MyShops)}/>
                 <Route path={`/user/room/new`} component={withAuth(NewRoom)}/>
                 <Route path={`/user/room/images/:slug`} component={withAuth(PhotosUpload)}/>
+                <Route path={`/admin/room/:slug/reservation/:reservationSlug`} component={withAuth(EditRoom)}/>
             </Switch>
         </div>)
     }

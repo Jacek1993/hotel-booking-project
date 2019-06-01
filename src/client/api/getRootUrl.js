@@ -4,9 +4,4 @@ function getRootUrl(){
      return dev ? `http://localhost:${port}` : `http://localhost:${port}`;
 
 }
-
-export function getRoomImageURL(){
-    return getRootUrl()+'/room/image'
-}
-
 export default getRootUrl;

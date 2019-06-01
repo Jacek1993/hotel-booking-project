@@ -77,7 +77,7 @@ class PhotosUpload extends Component {
         const data=new FormData();
         this.state.photos.forEach((photo)=>data.append('productImage', photo));
         sendForm(`/room/image/${this.props.match.url}`, data);
-        // this.setState({redirectToRooms: true})
+        this.setState({redirectToRooms: true})
     }
 
     render() {

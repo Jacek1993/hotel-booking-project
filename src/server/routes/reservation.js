@@ -1,10 +1,8 @@
 import express from 'express';
-import {ObjectId} from 'mongodb';
-import  _  from 'lodash';
+
 
 const router = express.Router();
 import {Reservation} from '../models/Reservation';
-import {logger} from '../logs/logger';
 import {Room} from '../models/Room';
 import {authenticate} from '../utils/auth';
 

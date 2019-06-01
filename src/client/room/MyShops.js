@@ -16,6 +16,8 @@ import CardMedia from "@material-ui/core/CardMedia/CardMedia";
 import Photo from '@material-ui/icons/Photo'
 import DeleteRoom from "./DeleteRoom";
 import Edit from '@material-ui/icons/Edit'
+import {convertImageUrl} from "../api/utils";
+import {config} from '../../config/clientConfig'
 // import DeleteShop from './DeleteShop'
 
 const styles = theme => ({
@@ -67,13 +69,6 @@ class MyShops extends Component {
         this.setState({rooms: updatedRooms});
     }
 
-    convertImageUrl = (url) => {
-        if (url === undefined) {
-            return url
-        }
-        let convertedUrl = url.split('/');
-        return convertedUrl[convertedUrl.length - 1];
-    }
     componentDidMount = () => {
         this.loadRooms()
     }
@@ -105,7 +100,7 @@ class MyShops extends Component {
                      <ListItem>
                     <CardMedia
                         className={classes.cover}
-                        image={`/room/image/${this.convertImageUrl(room.picture[0])}`}
+                        image={`${config.imageURL}/${convertImageUrl(room.picture[0])}`}
                         title={room.roomNumber}/>
                      <div className={classes.details}>
                          <Typography type="headline" component="h2" color="primary" className={classes.title}>
@@ -121,7 +116,7 @@ class MyShops extends Component {
                                      <Photo/>
                                  </IconButton>
                              </Link>
-                            <Link to={`/room/${room.slug}/reservation/${(new Date()).toISOString()}`}>
+                            <Link to={`/admin/room/${room.slug}/reservation/${(new Date()).toISOString()}`}>
                              <IconButton aria-label="Edit" color="primary">
                                     <Edit/>
                              </IconButton>

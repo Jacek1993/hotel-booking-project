@@ -169,16 +169,8 @@ class EditProfile extends Component {
                                onChange={this.handleChange} margin="normal" name="firstName"/><br/>
                     <TextField id="lastName" label="lastName" className={classes.textField} value={this.state.lastName}
                                onChange={this.handleChange} margin="normal" name="lastName"/><br/>
-                    <TextField
-                        id="phone"
-                        label="phoneNumber"
-                        rows="2"
-                        value={this.state.phoneNumber}
-                        onChange={this.handleChange}
-                        className={classes.textField}
-                        margin="normal"
-                        name="phoneNumber"
-                    /><br/>
+                    <TextField id="phone" label="phoneNumber" rows="2" value={this.state.phoneNumber} onChange={this.handleChange}
+                               className={classes.textField} margin="normal" name="phoneNumber"/><br/>
                     <TextField id="email" type="email" label="email" className={classes.textField}
                                value={this.state.email} onChange={this.handleChange} margin="normal" name="email"/><br/>
                     {/*<TextField id="password" type="password" label="Password" className={classes.textField} value={this.state.password} onChange={this.handleChange('password')} margin="normal"/>*/}
