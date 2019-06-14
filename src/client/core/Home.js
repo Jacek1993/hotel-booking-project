@@ -1,49 +1,75 @@
 import React, {Component} from 'react';
-import PropTypes from 'prop-types';
+import Grid from '@material-ui/core/Grid'
 import {withStyles} from '@material-ui/core/styles';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import CardMedia from '@material-ui/core/CardMedia'
-import Typography from '@material-ui/core/Typography';
+import {loadRoom} from '../api/api-room'
+import Search from '../room/Search'
+import Paper from "@material-ui/core/Paper/Paper";
+import Card from "@material-ui/core/Card/Card";
+
 
 
 const styles = theme => ({
-    card: {
-        maxWidth: 600,
-        margin: 'auto',
-        marginTop: theme.spacing.unit * 5
+    root: {
+        flexGrow: 1,
+        margin: 30,
     },
-    title: {
-        padding:`${theme.spacing.unit * 3}px ${theme.spacing.unit * 2.5}px ${theme.spacing.unit * 2}px`,
-        color: theme.palette.text.secondary
+    paper: {
+        height: '300px',
+        width: '100%'
     },
-    media: {
-        minHeight: 330
+    grid:{
+        margin: '300px'
     }
-});
+})
 
 class Home extends Component {
+    constructor(){
+        super();
+        this.state={
+            searchResults: [],
+            error: ''
+        }
+        this.loadRooms=this.loadRooms.bind(this)
+
+    }
+
+    loadRooms(){
+        loadRoom().then((response)=>{
+            if(response.error){
+                console.log(response.error)
+                this.setState({error: response.error});
+            }
+            else{
+                this.setState({searchResults: response})
+            }
+        })
+    }
+
+    componentDidMount(){
+        this.loadRooms();
+    }
+
+
     render() {
         const {classes} = this.props;
         return (
-            <Card className={classes.card}>
-                <Typography type="headline" component="h2" className={classes.title}>
-                    Home Page
-                </Typography>
-                <CardContent>
-                    <Typography type="body1" component="p">
-                        Welcome to the MERN Skeleton home page.
-                    </Typography>
-                </CardContent>
-            </Card>
+            <div className={classes.root}>
+
+                <Grid container spacing={2}>
+                    <Grid container xs={8} sm={8} margin={200} >
+                        {this.state.searchResults &&(
+                            <Search searchResults={this.state.searchResults} />
+                        )}
+
+                    </Grid>
+                    <Grid itesm xs={4} sm={4}>
+                        {/*<Suggestions products={this.state.searchResult}/>*/}
+                    </Grid>
+                </Grid>
+            </div>
         )
     }
 }
-
-
-
-//JSS is a CSS-in-JS
-
 
 
 export default withStyles(styles)(Home)

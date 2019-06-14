@@ -9,6 +9,7 @@ import Icon from '@material-ui/core/Icon'
 import PropTypes from 'prop-types'
 import {withStyles} from '@material-ui/core/styles'
 import {create} from '../api/api-user';
+import {Redirect} from 'react-router-dom'
 
 
 const styles = theme => ({
@@ -44,7 +45,8 @@ class Signup extends Component {
         password: '',
         email: '',
         slug: '',
-        error: ''
+        error: '',
+        redirectToUserPage: false
     }
 
     handleChange = name => event => {
@@ -65,13 +67,17 @@ class Signup extends Component {
             } else {
                 // console.log('InCreate Method', this.state.slug)
                 this.state.slug=user.slug=data.slug;
-                this.props.history.push(`/client/${user.slug}`)
+                this.setState({redirectToUserPage: true});
             }
         })
     }
 
     render() {
         const {classes} = this.props
+        if (this.state.redirectToUserPage) {
+            return (<Redirect to={`/secret/${this.state.slug}`}/>)
+        }
+
         return (<div>
             <Card className={classes.card}>
                 <CardContent>

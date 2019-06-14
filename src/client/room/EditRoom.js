@@ -17,6 +17,7 @@ import {updateRoom} from '../api/api-room'
 import IconButton from "@material-ui/core/IconButton/IconButton";
 import Delete from "@material-ui/core/SvgIcon/SvgIcon";
 import Remove from '@material-ui/icons/Remove'
+import MyReservation from '../reservation/MyReservation'
 
 
 const styles = theme => ({
@@ -73,6 +74,7 @@ class EditShop extends Component {
                 retail: 0,
                 sale: 0
             },
+            tags: '',
             picture: [],
             reservation_table: [],
             error: '',
@@ -109,7 +111,7 @@ class EditShop extends Component {
                this.setState({slug: response[0].slug});
                this.setState({reservation_table: response[0].reservation_table});
                this.setState({pricing: response[0].pricing});
-                console.log(this.state.pricing)
+                console.log(this.state.reservation_table)
 
            }
        })
@@ -121,7 +123,8 @@ class EditShop extends Component {
             roomNumber: this.state.roomNumber,
             pricing: this.state.pricing,
             description: this.state.description,
-            picture: this.state.picture
+            picture: this.state.picture,
+            tags: this.state.tags
         }
         console.log(JSON.stringify(room))
 
@@ -217,6 +220,7 @@ class EditShop extends Component {
                                                margin="normal"/><br/>
                                     <TextField id="sale" label="sale" className={classes.textField} value={this.state.pricing.sale} name="sale" onChange={this.handlePricingChange}
                                                margin="normal"/><br/>
+                                    <TextField id="tags" label="tags" multiline className={classes.textField} value={this.state.tags} name="tags" onChange={this.handleChange} margin="normal"/><br/>
                                     <Divider/>
                                     {Description}
                                     <br/>
@@ -242,8 +246,10 @@ class EditShop extends Component {
                         </CardActions>
                     </Card>
                 </Grid>
-                <Grid item xs={6} sm={6}>
-                    <MyReservation shopId={this.match.params.shopId}/>
+                <Grid item xs={5} sm={5}>
+                    { this.state.reservation_table && (
+                    <MyReservation reservation_table={this.state.reservation_table} slug={this.state.slug}/>
+                    )}
                 </Grid>
             </Grid>
         </div>)

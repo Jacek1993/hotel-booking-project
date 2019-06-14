@@ -23,7 +23,7 @@ var ReservationSchema = new mongoose.Schema({
 });
 
 class ReservationClass {
-    static async add(startDate1, finishDate1, name) {
+    static async add(startDate1, finishDate1, name, userSlug) {
         console.log('Reservation add weszlo');
         const slug = await generateSlug(this, name);
         console.log('generating slug', slug);
@@ -42,7 +42,8 @@ class ReservationClass {
             finishDate,
             createdAt,
             name,
-            state
+            state,
+            userSlug
         });
     }
 

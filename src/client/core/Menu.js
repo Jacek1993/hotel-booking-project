@@ -9,6 +9,7 @@ import {Link, withRouter} from 'react-router-dom'
 import {signOut} from "../api/api-user";
 import PropTypes from 'prop-types';
 import {isAuthenticated} from '../api/auth-helper'
+import Redirect from "react-router-dom/es/Redirect";
 
 const isActive = (history, path) => {
     if (history.location.pathname === path)
@@ -31,8 +32,10 @@ class MenuShow extends Component {
         this.state = {
             status: false,
             slug: '',
-            role: 'user'
+            role: 'user',
+            redirectToHome: false
         }
+        this.submit=this.submit.bind(this)
     }
 
     componentDidMount() {
@@ -42,9 +45,9 @@ class MenuShow extends Component {
     componentWillReceiveProps(nextProps) {
         console.log(nextProps)
         if (nextProps.slug !== '') {
-            const slug = nextProps.slug;
             this.setState({slug: nextProps.slug})
             this.setState({status: true})
+            this.forceUpdate()
             this.setState({role: nextProps.role})
         }
         console.log(this.state.slug);
@@ -52,26 +55,34 @@ class MenuShow extends Component {
 
     //this function prevents from changing state if it is empty because react renders complete DOM tree for any changes
     shouldComponentUpdate(nextProps, nextState) {
-        return this.state.status
+        return this.state.status || this.state.redirectToHome
     }
 
     submit = () => {
         signOut().then(response => {
             if (!response.error) {
-
+                this.setState({redirectToHome: true})
             }
         })
         this.setState({status: false})
+
         this.forceUpdate()
+
+
     };
 
 
     render() {
+
+        if(this.state.redirectToHome){
+            this.setState({redirectToHome: false})
+        }
+
         return (
             <AppBar position="static">
                 <Toolbar>
                     <Typography type="title" color="inherit">
-                        MERN Skeleton
+                       Hotel Booking App
                     </Typography>
                     <Link to="/">
                         <IconButton aria-label="Home" style={isActive(this.props.history, '/')}>
@@ -96,7 +107,7 @@ class MenuShow extends Component {
         </span>)
                     }
                         {
-                            this.state.role === 'admin'
+                            this.state.role === 'admin' && this.state.status
                             && (
                                 <span>
                                     <Link  to="/user/rooms">
@@ -110,10 +121,10 @@ class MenuShow extends Component {
                         {
                             this.state.status
                             && (<span>
-                                  <Button color="inherit" onClick={() => {
+                                <Link to={`/`} >
+                                  <Button style={isActive(this.props.history, "/")} color="inherit" onClick={() => {
                                       this.submit();
-                                      this.props.history.push('/');
-                                  }}>Sign out</Button>
+                                  }}>Sign out</Button></Link>
                                   <Link to={`/secret/${this.state.slug}`}>
                             <Button style={isActive(this.props.history, "/signin")}>Secret
                             </Button>

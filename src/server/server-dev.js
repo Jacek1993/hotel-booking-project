@@ -25,6 +25,11 @@ const app = express(),
             HTML_FILE = path.join(DIST_DIR, 'index.html'),
             compiler = webpack(config)
 
+app.get('/ro', (req, res)=>{
+    res.status(200).send('OK')
+})
+
+
 app.use(webpackDevMiddleware(compiler, {
   publicPath: config.output.publicPath
 }));
@@ -40,7 +45,7 @@ app.use(morgan('combined', {stream: logger.stream}));
 app.use('/room', room);
 app.use('/reservation', reservation);
 app.use('/client', client);
-app.use('opinion', opinion);
+app.use('/opinion', opinion);
 app.use('/room/image', express.static(process.cwd()+'/src/img'))
 app.route('/something')
     .get(authenticate, (req,res)=>{
@@ -59,6 +64,7 @@ app.get('/checkToken', authenticate, (req, res)=>{
         slug: req.client.slug
     })
 });
+
 
 // app.get('*', (req, res, next) => {
 //   compiler.outputFileSystem.readFile(HTML_FILE, (err, result) => {

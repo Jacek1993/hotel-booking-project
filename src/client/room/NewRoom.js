@@ -48,6 +48,7 @@ class NewRoom extends Component{
             roomNumber: '',
             personAmount: 0,
             description: [],
+            tags: '',
             pricing: {
                 retail: 0,
                 sale: 0
@@ -58,7 +59,7 @@ class NewRoom extends Component{
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleNestedChange = this.handleNestedChange.bind(this);
-        this.handlePricingChange=this.handlePricingChange.bind(this)
+        this.handlePricingChange=this.handlePricingChange.bind(this);
     }
 
 
@@ -89,6 +90,7 @@ class NewRoom extends Component{
 
     handleSubmit(e) {
         e.preventDefault();
+        console.log('new roooooooooooooooooooooooooooooooooom')
         createRoom(this.state).then(response=>{
             if(response.error){
                 this.setState({error: response.error})
@@ -98,6 +100,7 @@ class NewRoom extends Component{
         })
 
     }
+
 
     addInput() {
         const newInput = '';
@@ -132,6 +135,7 @@ class NewRoom extends Component{
                     <TextField id="personAmount" label="personAmount" className={classes.textField} value={this.state.personAmount} name="personAmount" onChange={this.handleChange} margin="normal"/><br/>
                     <TextField id="retail" label="retail" className={classes.textField} value={this.state.pricing.retail} name="retail" onChange={this.handlePricingChange} margin="normal"/><br/>
                     <TextField id="sale" label="sale" className={classes.textField} value={this.state.pricing.sale} name="sale" onChange={this.handlePricingChange} margin="normal"/><br/>
+                    <TextField id="tags" label="tags" multiline className={classes.textField} value={this.state.tags} name="tags" onChange={this.handleChange} margin="normal" /><br/>
                     <Typography type="headline" component="h2" className={classes.title}>
                         Add description here
                     </Typography><br/>

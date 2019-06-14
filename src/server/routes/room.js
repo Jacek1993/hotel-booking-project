@@ -7,6 +7,7 @@ import fs from 'fs'
 const router = express.Router();
 import {Room} from '../models/Room';
 import {authenticate} from '../utils/auth';
+import errorHandler from "../db/dbErrorHandler";
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -45,7 +46,8 @@ router.post('/', authenticate, async (req, res) => {
                 roomNumber: req.body.roomNumber,
                 description: req.body.description,
                 pricing: req.body.pricing,
-                personAmount: req.body.personAmount
+                personAmount: req.body.personAmount,
+                tags: req.body.tags
             });
             res.status(200).send(room);
         }
@@ -108,15 +110,17 @@ router.get('/isAvailable/:roomNumber', authenticate, async (req, res, next) => {
     }
 });
 
-router.post('/rooms', authenticate, async (req, res, next) => {
+router.get('/rooms', async (req, res, next) => {
     try {
-        let starDate = req.body.startDate;
-        let finishDate = req.body.finishDate;
-        let personAmount = req.body.personAmount;
+        let starDate = req.query.startDate;
+        let finishDate = req.query.finishDate;
+        let personAmount = req.query.personAmount;
         let rooms = await Room.findRoom({startDate: starDate, finishDate: finishDate, personAmount: personAmount});
         res.status(200).send(rooms);
     } catch (e) {
-        console.log(e);
+        res.status(400).json({
+            error: e
+        })
     }
 });
 
@@ -131,17 +135,12 @@ router.delete('/:roomNumber/reservation/:id', authenticate, async (req, res) => 
     }
 });
 
-router.get('/all', authenticate, async (req, res) => {
+router.get('/all' , async (req, res) => {
     try {
-        if (req.role === 'admin') {
+
             let rooms = await Room.find({}).select('roomNumber slug pricing picture personAmount description').exec();
             res.status(200).send(rooms);
-        }
-        else {
-            res.stat(401).json({
-                error: 'You are not authenticated'
-            })
-        }
+
     } catch (e) {
         res.status(400).json({
             error: e
@@ -149,9 +148,10 @@ router.get('/all', authenticate, async (req, res) => {
     }
 })
 
-router.get('/:slug', authenticate, async (req, res) => {
+router.get('/view/:slug',  async (req, res) => {
     try {
-        let room = await Room.find({slug: req.params.slug});
+        console.log(req.params.slug)
+        let room = await Room.findOne({slug: req.params.slug}).select('roomNumber slug pricing picture personAmount description').exec();
         res.status(200).send(room);
     } catch (e) {
         res.status(400).json({
@@ -207,6 +207,7 @@ router.post('/update/:slug', authenticate, async (req, res) => {
             const room = await Room.findOne({slug: req.params.slug});
             room.description = req.body.description;
             room.pricing = req.body.pricing;
+            room.tags=req.body.tags;
             let toDelete = [];
             req.body.picture.forEach((picture) => {
                 if(!room.picture.includes(picture))
@@ -239,13 +240,35 @@ router.post('/update/:slug', authenticate, async (req, res) => {
         })
     }
 })
+//todo zmienic url oraz dodac async await zamiast tej implementacji
+router.get('/',(req, res)=>{
+    let tags={};
+    if(req.query.search){
+        tags={'$regex' : req.query.search, '$options': "i"};
+    }
+    else{
+        let temp=[];
+        res.status(200).send(temp)
+    }
+
+        Room.find({tags},(err,response)=>{
+            if(err){
+                res.status(400).json({
+                    error: errorHandler.getErrorMessage(err)
+                })
+            }
+            res.json(response)
+        }).select('roomNumber slug pricing picture personAmount description');
+
+})
 
 
-router.get('/', (req, res) => {
-    res.send({
-        success: 'udalo sie w koncu'
-    });
-});
+
+// router.get('/', (req, res) => {
+//     res.send({
+//         success: 'udalo sie w koncu'
+//     });
+// });
 
 
 export default router;

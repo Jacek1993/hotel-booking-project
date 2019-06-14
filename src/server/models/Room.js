@@ -25,13 +25,14 @@ const RoomSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         title: {type: String},
         rating: {type: Number},
-    }]
+    }],
+    tags: {type: String}
 });
 
 class RoomClass {
 
 
-    static async add({roomNumber, description, pricing, personAmount}) {
+    static async add({roomNumber, description, pricing, personAmount, tags}) {
 
         let room = await this.findOne({roomNumber});
         if (room) {
@@ -53,6 +54,7 @@ class RoomClass {
             personAmount,
             description,
             pricing,
+            tags,
             reservation: {
                 startDate,
                 finishDate
@@ -99,7 +101,7 @@ class RoomClass {
                         }
                 }
             }, "personAmount": personAmount
-        }, {pricing: 1, personAmount: 1, destination: 1, slug: 1, roomNumber: 1});
+        });
 
         console.log(rooms);
         if (!rooms) return Promise.reject(`There is no such records with credentials: startDate: ${startDate}, finishDate: ${finishDate}, personAmount: ${personAmount}`);

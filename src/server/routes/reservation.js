@@ -13,8 +13,9 @@ router.post('/', authenticate, async (req, res) => {
         let client = req.client;
         let startDate = req.body.startDate;
         let finishDate = req.body.finishDate;
+        let userSlug=req.client.slug;
         let name = client.firstName.concat(' ', client.lastName);
-        const reservation = await Reservation.add(startDate, finishDate, name);
+        const reservation = await Reservation.add(startDate, finishDate, name, userSlug);
         console.log('reservation ', reservation);
         let slug = reservation.slug;
         let rooms = reservation.getRooms();
@@ -128,5 +129,7 @@ router.get('/:slug', async (req, res) => {
     }
 
 });
+
+
 
 export default router;
