@@ -7,13 +7,10 @@ import {body, buildCheckFunction, validationResult} from 'express-validator/chec
 
 const router = express.Router();
 import {Client} from '../models/Client';
-import {EmailTemplate} from '../models/EmailTemplate';
-import {logger} from '../logs/logger';
 import {authenticate} from '../utils/auth';
 import email from '../email/config';
 import multer from 'multer';
 import {storage, getOneFile} from '../db/mongoose';
-import _ from 'lodash';
 import errorHandler from '../db/dbErrorHandler'
 
 
@@ -105,7 +102,7 @@ router.get('/:slug', authenticate, async (req, res) => {
     try {
         let slug = req.params.slug;
         console.log('slug  ', slug);
-        let client = await Client.findOne({slug: slug});
+        let client = await Client.findOne({slug: slug}).populate('reservation').exec();
 
         res.status(200).json({
             email: client.email,

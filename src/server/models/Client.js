@@ -15,12 +15,7 @@ const ClientSchema = new mongoose.Schema({
     password: {type: String, require: true},
     role: {type: String},
     slug: {type: String},
-    reservation: [{
-        slug: {type: String},
-        startDate: {type: Date},
-        finishDate: {type: Date},
-        rooms: [{type: String}]
-    }],
+    reservation: [{type: mongoose.Schema.ObjectId, ref: 'Reservation'}],
     tokens: [{
         access: {
             type: String,
@@ -131,7 +126,7 @@ class ClientClass {
         catch (e) {
             return Promise.reject(`cannot find user with this token ${token}`)
         }
-
+        console.log('in findByToken()')
         return  user.findOne({
             '_id': decode._id,
             'tokens.token': token,
@@ -177,7 +172,7 @@ class ClientClass {
 ClientSchema.methods.toJSON = function () {
     let user = this;
     let userObject = user.toObject();
-    return _.pick(userObject, ['id', 'email', 'slug', 'firstName', 'lastName', 'reservation']);
+    return _.pick(userObject, ['_id', 'email', 'slug', 'firstName', 'lastName', 'reservation']);
 };
 //middleware to hash user password
 ClientSchema.pre('save', function (next) {
@@ -193,6 +188,10 @@ ClientSchema.pre('save', function (next) {
     } else {
         next();
     }
+});
+
+ClientSchema.pre('remove', function(next){
+    this.model('Reservation').remove({user: this._id}, next);
 });
 
 ClientSchema.loadClass(ClientClass);

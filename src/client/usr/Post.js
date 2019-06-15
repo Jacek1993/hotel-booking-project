@@ -55,18 +55,19 @@ class Post extends Component {
     state = {
         finishDate: '',
         startDate: '',
-        rooms: [],
-        slug: ''
+        totalAmount: 0,
+        slug: '',
+        reservationName: ''
     }
 
 
 
     componentDidMount = () => {
         this.convertDate();
-        this.setState({slug:this.props.reservation.slug, startDate: this.props.reservation.startDate, finishDate: this.props.reservation.finishDate, rooms: this.props.reservation.rooms})
+        this.setState({slug:this.props.reservation.slug, startDate: this.props.reservation.startDate, finishDate: this.props.reservation.finishDate, totalAmount: this.props.reservation.totalAmount, reservationName: this.props.reservation.name})
     }
     componentWillReceiveProps = (props) => {
-        this.setState({slug:this.props.reservation.slug, startDate: this.props.reservation.startDate, finishDate: this.props.reservation.finishDate, rooms: this.props.reservation.rooms})
+        this.setState({slug:this.props.reservation.slug, startDate: this.props.reservation.startDate, finishDate: this.props.reservation.finishDate, totalAmount: this.props.reservation.totalAmount, reservationName: this.props.reservation.name})
     }
 
     convertDate(){
@@ -85,17 +86,13 @@ class Post extends Component {
                         <Avatar src={`/client/profile/image/${this.props.slug}`}/>
                     }
 
-                    title={<Link to={"/reservation/" + this.props.reservation.slug}>Reservation Name</Link>}
+                    title={<Link to={"/reservation/" + this.props.reservation.slug}>reservation name: {this.props.reservation.name}</Link>}
                     subheader={`${moment(this.startDate).format('LLL')}    ${moment(this.finishDate).format('LLL')}`}
                     className={classes.cardHeader}
                 />
                 <CardContent className={classes.cardContent}>
                     <Typography component="p" className={classes.text}>
-                        <ul>
-                            {
-                                this.props.reservation.rooms.map((opt, index)=><li key={index}><a href={`${getRootUrl()}/room/isAvailable/${opt}`}>{opt}</a></li>)
-                            }
-                        </ul>
+                      TotalAmount: {this.state.totalAmount}
                     </Typography>
                 </CardContent>
             </Card>

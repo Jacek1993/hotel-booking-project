@@ -13,14 +13,7 @@ const RoomSchema = new mongoose.Schema({
         sale: {type: Number}
     },
     picture: [{type: String}],
-    reservation: [{
-        slug: {type: String},
-        name: {type: String},
-        startDate: {type: Date},
-        finishDate: {type: Date},
-        state: {type: String, default: ""},
-        creationTime: {type: Date}
-    }],
+    reservation: [{type: mongoose.Schema.ObjectId, ref: 'Reservation'}],
     opinions: [{
         type: mongoose.Schema.Types.ObjectId,
         title: {type: String},
@@ -123,9 +116,7 @@ class RoomClass {
         });
     }
 
-    static async findBySlug(slug) {
-        return await this.findOne({slug: slug});
-    }
+
 
     async addReservation(reservation) {
         let room = this;
@@ -211,9 +202,11 @@ class RoomClass {
             }
         ]);
     }
-
-
 }
+
+RoomSchema.pre('remove', function(next){
+    this.model('Reservation').remove({reservedRoom: this._id}, next);
+})
 
 RoomSchema.loadClass(RoomClass);
 const Room = mongoose.model('Room', RoomSchema);

@@ -65,10 +65,10 @@ app.get('/checkToken', authenticate, (req, res)=>{
     })
 });
 
-
-app.get('*', (req, res, next) => {
-    res.sendFile(HTML_FILE)
-})
+//todo this is backend protection
+// app.get('*', (req, res, next) => {
+//     res.sendFile(HTML_FILE)
+// })
 
 const PORT = process.env.PORT || 3000
 

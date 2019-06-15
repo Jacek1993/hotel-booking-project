@@ -98,7 +98,7 @@ router.get('/isAvailable/:roomNumber', authenticate, async (req, res, next) => {
         console.log('Room ID number', roomNumber);
         let startDate = req.body.startDate;
         let finishDate = req.body.finishDate;
-        let room = await Room.isAvailableRoom({roomNumber: roomNumber, startDate: startDate, finishDate: finishDate});
+        let room = await Room.isAvailableRoom({roomNumber,  startDate, finishDate});
         if (room) {
             console.log('Room is available', room);
             res.status(200).send('Room is available');
@@ -124,16 +124,6 @@ router.get('/rooms', async (req, res, next) => {
     }
 });
 
-
-router.delete('/:roomNumber/reservation/:id', authenticate, async (req, res) => {
-    try {
-        console.log(req.params.roomNumber + "     " + req.params.id);
-        let room = await Room.removeReservation(req.params.roomNumber, req.params.id);
-        res.status(200).send(room);
-    } catch (e) {
-        res.status(400).send(e);
-    }
-});
 
 router.get('/all' , async (req, res) => {
     try {
@@ -261,14 +251,6 @@ router.get('/',(req, res)=>{
         }).select('roomNumber slug pricing picture personAmount description');
 
 })
-
-
-
-// router.get('/', (req, res) => {
-//     res.send({
-//         success: 'udalo sie w koncu'
-//     });
-// });
 
 
 export default router;
