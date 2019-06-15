@@ -40,6 +40,7 @@ class MenuShow extends Component {
 
     componentDidMount() {
         isAuthenticated(this);
+
     }
 
     componentWillReceiveProps(nextProps) {

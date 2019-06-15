@@ -34,6 +34,7 @@ class Home extends Component {
     }
 
     loadRooms(){
+        console.log('loadRoooms')
         loadRoom().then((response)=>{
             if(response.error){
                 console.log(response.error)
@@ -47,6 +48,7 @@ class Home extends Component {
 
     componentDidMount(){
         this.loadRooms();
+        console.log('componentDidMount')
     }
 
 

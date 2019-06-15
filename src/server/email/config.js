@@ -4,17 +4,14 @@ import  {EmailTemplate} from '../models/EmailTemplate';
 
 sgMail.setApiKey( process.env.SENDGRID_API_KEY);
 
-async function sendEmail(msg) {
+async function sendEmail(kind, filling, email) {
+    const template=await EmailTemplate.getEmailTemplate(kind, filling);
+    msg.to=email;
+    msg.subject=template.subject;
+    msg.html=template.message;
+    msg.from=process.env.OWNER_EMAIL;
     await sgMail.send(msg);
 };
 
-const msg= {
-    to: '',
-    from: process.env.OWNER_EMAIL,
-    subject: '',
-    html: '',
-};
-
-export {msg};
 export default sendEmail;
 

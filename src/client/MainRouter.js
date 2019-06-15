@@ -12,6 +12,7 @@ import NewRoom from "./room/NewRoom";
 import PhotosUpload from "./room/PhotosUpload";
 import EditRoom from "./room/EditRoom";
 import ClientRoom from "./room/ClientRoom";
+import NotFoundPage from "./NotFoundPage";
 
 
 
@@ -47,6 +48,7 @@ class MainRouter extends Component{
                 <Route path={`/user/room/images/:slug`} component={withAuth(PhotosUpload)}/>
                 <Route path={`/user/room/:slug`} component={ClientRoom} />
                 <Route path={`/admin/room/:slug/reservation/:reservationSlug`} component={withAuth(EditRoom)}/>
+                <Route component={NotFoundPage}/>
             </Switch>
         </div>)
     }

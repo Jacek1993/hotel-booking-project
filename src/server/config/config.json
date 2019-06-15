@@ -6,7 +6,7 @@
     "OWNER_PASSWORD": "$2a$10$QhYFdAemDjroF8j6pbChSuxUf8g2dnhYdjzzkSobB0gI8D..EVZDW",
     "POSSIBLE": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
     "OWNER_EMAIL": "mati@mati.hub.pl",
-    "SENDGRID_API_KEY": "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",
+    "SENDGRID_API_KEY": "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",
     "ROOT_URL": "http://localhost:3000",
     "PAYLOAD_AUTH": "auth"
   },
@@ -16,7 +16,7 @@
     "OWNER_PASSWORD": "$2a$10$QhYFdAemDjroF8j6pbChSuxUf8g2dnhYdjzzkSobB0gI8D..EVZDW",
     "POSSIBLE": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
     "OWNER_EMAIL": "mati@mati.hub.pl",
-    "SENDGRID_API_KEY": "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",
+    "SENDGRID_API_KEY": "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",
     "ROOT_URL": "http://localhost:3000",
     "PAYLOAD_AUTH": "auth"
   }

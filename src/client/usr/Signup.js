@@ -39,15 +39,22 @@ const styles = theme => ({
 })
 
 class Signup extends Component {
-    state = {
-        firstName: '',
-        lastName: '',
-        password: '',
-        email: '',
-        slug: '',
-        error: '',
-        redirectToUserPage: false
+
+    constructor(){
+        super();
+        this.state = {
+            firstName: '',
+            lastName: '',
+            password: '',
+            email: '',
+            slug: '',
+            error: '',
+            redirectToUserPage: false
+        }
+        this.handleChange=this.handleChange.bind(this);
+        this.clickSubmit=this.clickSubmit.bind(this);
     }
+
 
     handleChange = name => event => {
         this.setState({[name]: event.target.value})

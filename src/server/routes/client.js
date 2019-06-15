@@ -11,7 +11,6 @@ import {EmailTemplate} from '../models/EmailTemplate';
 import {logger} from '../logs/logger';
 import {authenticate} from '../utils/auth';
 import email from '../email/config';
-import {msg} from '../email/config';
 import multer from 'multer';
 import {storage, getOneFile} from '../db/mongoose';
 import _ from 'lodash';
@@ -31,19 +30,12 @@ router.post('/signup', async (req, res) => {
             let client = await Client.add(body);
             console.log(client);
             let token = await client.generateAuthTokenRegistration(body.options);
-
-            let template = await EmailTemplate.getEmailTemplate('welcome', {
-                userName: client.firstName,
-                clientUrl: `${process.env.ROOT_URL}/client/${client.slug}`,
+            const userCredentials={
+                userName: client.userName,
+                clientUrl: `${process.env.ROOT_URL}/client/${client.slug}?x-auth=${token}`,
                 clientName: client.firstName.concat(' ', client.lastName)
-            });
-
-            console.log(template);
-            msg.to = client.email;
-            msg.subject = template.subject;
-            msg.html = template.message;
-            console.log('msg  ', msg);
-            await email(msg);
+            };
+            await email('welcome', userCredentials, client.email);
             console.log('AFTER SENDING EMAIL');
 
             res.status(200)

@@ -5,6 +5,8 @@ const router = express.Router();
 import {Reservation} from '../models/Reservation';
 import {Room} from '../models/Room';
 import {authenticate} from '../utils/auth';
+import email from '../email/config';
+import {Client} from '../models/Client'
 
 
 router.post('/', authenticate, async (req, res) => {
@@ -92,6 +94,14 @@ router.delete('/purge', authenticate, async (req, res) => {
         console.log(req.query);
         let reservationSlug = req.query.reservationSlug;
         let client = req.client;
+        if(req.headers.owner){
+            client=await Client.findOne({slug: req.headers.owner});
+            const credentials={
+                userName: client.userName,
+                employer: req.query.client.userName
+            }
+            await email('reservationRemoval', credentials, client.email);
+        }
         await Reservation.deleteReservation(reservationSlug);
         await client.update({
             $pull: {
@@ -102,7 +112,9 @@ router.delete('/purge', authenticate, async (req, res) => {
         });
         res.status(200).send('OK');
     } catch (e) {
-        res.status(400).send(e);
+        res.status(400).json({
+            error: e
+        })
     }
 });
 
@@ -117,7 +129,7 @@ router.put('/change', authenticate, async (req, res) => {
 });
 
 //ten request jest niezabiespieczony w sensie jesli chcemy go otworzyc w przegladarce nie mozemy dac autentykacji
-router.get('/:slug', async (req, res) => {
+router.get('/:slug', authenticate, async (req, res) => {
 
     console.log(req.params.slug);
     try {

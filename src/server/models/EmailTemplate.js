@@ -40,6 +40,24 @@ class EmailTemplateClass{
         </p>
        Jacek and Marcin,
         Internet Engineering Team`
+            },
+            {
+                name: 'reservationRemoval',
+                subject: 'Your reservation has been remove',
+                message: `<%= userName %>,
+        <p>
+          Unfortunately Your reservation has been removed by <%= employer %>
+        </p>
+        <p>
+          If reservation was removed by our employer probably room that You booked is under construction
+        </p>
+        <p>
+          If you have any questions please don't hesitate to contact with us.
+          email: mati@mati.hub.pl
+          Or you can call to us +48 782 052 221
+        </p>
+       Jacek and Marcin,
+        Internet Engineering Team`
             }
         ];
         templates.forEach(async (template) => {

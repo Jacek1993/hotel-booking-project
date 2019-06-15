@@ -23,6 +23,8 @@ import Avatar from "@material-ui/core/Avatar/Avatar";
 import moment from 'moment'
 import Paper from "@material-ui/core/Paper/Paper";
 import Grid from "@material-ui/core/Grid/Grid";
+import GridListTileBar from "@material-ui/core/GridListTileBar/GridListTileBar";
+import RemoveReservation from "./RemoveReservation";
 
 const styles = theme => ({
     products: {
@@ -39,9 +41,10 @@ const styles = theme => ({
         color: theme.palette.protectedTitle,
         fontSize: '1.2em'
     },
-    // grid:{
-    //   marginBottom: '300px'
-    // },
+    tileBar: {
+        backgroundColor: 'rgba(0, 0, 0, 0.72)',
+        textAlign: 'left'
+    },
     subheading: {
         marginTop: theme.spacing.unit * 2,
         color: theme.palette.openTitle
@@ -125,36 +128,36 @@ class MyReservation extends Component {
     }
 
     onDateChange = (startDate) => {
-        if(startDate){
+        if (startDate) {
             this.setState(() => ({startDate}))
         }
 
     }
 
+    removeReservation = (reservation) => {
+        const updateReservation = this.state.reservation;
+        const index = updateReservation.indexOf(reservation);
+        updateReservation.slice(index, 1);
+        this.setState({reservation: updateReservation});
+    }
 
-    // removeProduct = (product) => {
-    //     const updatedProducts = this.state.products
-    //     const index = updatedProducts.indexOf(product)
-    //     updatedProducts.splice(index, 1)
-    //     this.setState({shops: updatedProducts})
-    // }
-//todo add link to reservation
+
     render() {
         const {classes} = this.props
         return (
             <Paper>
-              <Grid marginBottom="200">
-                <SingleDatePicker
-                    startDate={this.state.startDate}
-                    onDateChange={this.onDateChange}
-                    focused={this.state.calendarFocused}
-                    onFocusChange={this.onFocusChange}
-                    numberOfMonths={1}
-                    isOutsideRange={() => false}
-                />
-                <Button color="primary" variant="raised" className={classes.submit}
-                        onClick={this.updateReservation}>Submit</Button>
-              </Grid>/
+                <Grid marginBottom="200">
+                    <SingleDatePicker
+                        startDate={this.state.startDate}
+                        onDateChange={this.onDateChange}
+                        focused={this.state.calendarFocused}
+                        onFocusChange={this.onFocusChange}
+                        numberOfMonths={1}
+                        isOutsideRange={() => false}
+                    />
+                    <Button color="primary" variant="raised" className={classes.submit}
+                            onClick={this.updateReservation}>Submit</Button>
+                </Grid>/
 
 
                 <List dense>
@@ -165,7 +168,7 @@ class MyReservation extends Component {
                                     <CardMedia>
                                     <CardHeader
                                         avatar={
-                                            <Avatar src={`${config.userImageURL}/${r.userSlug}`} />
+                                            <Avatar src={`${config.userImageURL}/${r.userSlug}`}/>
                                         }
                                         title={<Link to={`${config.userProfile}/${r.userSlug}`}>{r.name}</Link>}
                                     />
@@ -178,6 +181,9 @@ class MyReservation extends Component {
                                             <Typography type="subheading" component="h4" className={classes.subheading}>
                                                 TotalAmount: {r.totalAmount}
                                             </Typography>
+                                        <br/>
+                                                <RemoveReservation reservation={r} onRemove={this.removeReservation}/>
+
                                         </div>
                                     </CardMedia>
                                 </ListItem>

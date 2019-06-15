@@ -50,6 +50,9 @@ class Signin extends Component {
             redirectToReferrer: false,
             role: ''
         };
+
+        this.clickSubmit=this.clickSubmit.bind(this);
+        this.handleChange=this.handleChange.bind(this);
     }
 
 

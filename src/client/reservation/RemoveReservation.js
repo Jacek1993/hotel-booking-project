@@ -9,31 +9,38 @@ import DialogContent from '@material-ui/core/DialogContent'
 import DialogContentText from '@material-ui/core/DialogContentText'
 import DialogTitle from '@material-ui/core/DialogTitle'
 
-import {removeRoom} from '../api/api-room.js'
+import {removeReservation} from "../api/api-reservation";
 
-class DeleteShop extends Component {
+class RemoveReservation extends Component {
     state = {
         open: false
     }
+
     clickButton = () => {
         this.setState({open: true})
     }
+
     deleteShop = () => {
-        console.log(this.props.slug);
-        removeRoom(this.props.slug).then(response=>{
-            if(response.error){
+        console.log(this.props.reservation.slug);
+        const headers = {
+            owner: this.props.reservation.userSlug
+        };
+        removeReservation(this.props.reservation.slug, headers).then(response => {
+            if (response.error) {
                 console.log(response.error)
             }
-            else{
-                this.setState({open: false}, ()=>{
-                    this.props.onRemove(this.props.room)
+            else {
+                this.setState({open: false}, () => {
+                    this.props.onRemove(this.props.reservation)
                 })
             }
         })
     }
+
     handleRequestClose = () => {
         this.setState({open: false})
     }
+
     render() {
         return (<span>
       <IconButton aria-label="Delete" onClick={this.clickButton} color="secondary">
@@ -41,10 +48,10 @@ class DeleteShop extends Component {
       </IconButton>
 
       <Dialog open={this.state.open} onClose={this.handleRequestClose}>
-        <DialogTitle>{"Delete "+this.props.room.roomNumber}</DialogTitle>
+        <DialogTitle>{`Delete reservation of : ${this.props.reservation.userSlug}`}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Confirm to delete your room { this.props.description ? this.props.description[0] : ''}
+            Confirm to delete reservation {this.props.description ? this.props.description[0] : ''}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -59,8 +66,9 @@ class DeleteShop extends Component {
     </span>)
     }
 }
-DeleteShop.propTypes = {
-    room: PropTypes.object.isRequired,
+
+RemoveReservation.propTypes = {
+    reservation: PropTypes.object.isRequired,
     onRemove: PropTypes.func.isRequired
 }
-export default DeleteShop
+export default RemoveReservation
