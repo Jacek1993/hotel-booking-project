@@ -2,20 +2,20 @@ import express from 'express';
 const router = express.Router();
 import {Opinion} from '../models/Opinion';
 import {logger} from '../logs/logger';
+import {authenticate} from "../utils/auth";
 
 
-router.post('/', async (req,res)=>{
-
-
+router.post('/',authenticate, async (req,res)=>{
     try{
+        const title=req.body.title;
+        const description=req.body.description;
+        const rating=req.body.rating;
     let opinion=await Opinion.add({
-        title: 'opinion',
-        description: 'description opinion',
-        rating: 2.0,
-        clientSlug: 'czarny1992',
-        username: 'wampire'
+        title: title,
+        description: description,
+        rating: rating,
+        owner: req.client._id
     });
-    console.log('hello');
     res.status(200).send(opinion);
     }catch (e) {
         res.status(400).send(e);
@@ -23,9 +23,11 @@ router.post('/', async (req,res)=>{
 
 });
 
-router.put('/add', async(req, res)=>{
+router.put('/add',authenticate, async(req, res)=>{
     try{
-        let opinion=Opinion.addVote({opinionId: '5cb4a3b94e490a531a2ac570', votersId: 'czarny' });
+        const opinionId=req.query.opinionId;
+        const votersId=req.query.votersId;
+        let opinion=Opinion.addVote({opinionId, votersId });
         res.status(200).send(opinion)
     }catch (e) {
     res.status(400).send(e);

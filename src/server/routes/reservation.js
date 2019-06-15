@@ -25,7 +25,9 @@ router.post('/',authenticate, async (req, res) => {
         await reservation.save();
         res.status(200).send(reservation);
     } catch (e) {
-        res.status(400).send(e);
+        res.status(400).json({
+            error: e
+        })
     }
 });
 
@@ -39,7 +41,9 @@ router.put('/room/add', authenticate, async (req, res) => {
 
         res.status(200).send('OK');
     } catch (e) {
-        res.status(400).send(e)
+        res.status(400).json({
+            error: e
+        })
     }
 });
 
@@ -78,7 +82,9 @@ router.put('/change', authenticate, async (req, res) => {
         await Reservation.changeState(reservationSlug, newState);
         res.status(200).send('OK');
     } catch (e) {
-        res.status(400).send(e);
+        res.status(400).json({
+            error: e
+        })
     }
 });
 
@@ -91,7 +97,9 @@ router.get('/:slug', authenticate, async (req, res) => {
         let reservation = await Reservation.findOne({slug: slug}).populate('reservedRooms').exec();
         res.status(200).send(reservation)
     } catch (e) {
-        res.status(400).send(`Bad credentials reservation with slug: ${req.params.slug} doesn't exsits`);
+        res.status(400).json({
+            error: `Bad credentials reservation with slug: ${req.params.slug} doesn't exsits`
+        });
     }
 
 });
