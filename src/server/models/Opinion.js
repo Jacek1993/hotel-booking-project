@@ -15,8 +15,8 @@ class OpinionClass {
     static async add({title, description, rating, owner}) {
         console.log(`${title} hello`);
 
-        let opinion = await this.create({ title, description, rating, owner});
-        return opinion.update({opinionId: opinion._id});
+        return await this.create({ title, description, rating, owner});
+
     }
 
     static async addVote({opinionId, votersId}) {

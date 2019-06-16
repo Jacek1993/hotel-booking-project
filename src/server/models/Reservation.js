@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import generateSlug  from '../utils/slugify';
 import {Room} from './Room';
+import moment from 'moment';
 
 var ReservationSchema = new mongoose.Schema({
     slug: {type: String},
@@ -10,6 +11,7 @@ var ReservationSchema = new mongoose.Schema({
     user: {type: mongoose.Schema.ObjectId, ref: 'Client'},
     startDate: {type: Date},
     finishDate: {type: Date},
+    duration: {type: Number, default: 0},
     createdAt: {type: Date},
     name: {type: String},
     totalAmount: {type: Number, default: 0}
@@ -24,12 +26,14 @@ class ReservationClass {
         let startDate = new Date(startDate1);
         let finishDate = new Date(finishDate1);
         let createdAt = new Date();
+        const duration=Math.ceil(moment.duration(moment(finishDate).diff(moment(startDate))).asDays());
         let state = "PROCESSED";
         return this.create({
             slug,
             startDate,
             finishDate,
             createdAt,
+            duration,
             name,
             state,
             userSlug
@@ -45,12 +49,12 @@ class ReservationClass {
 
             let pricing = room.pricing;
             let reservation = await reserv.findOne({slug: reservationSlug});
-            let price = pricing.sale;
+            let price = pricing.sale*reservation.duration;
             price += reservation.totalAmount;
             reservation.totalAmount = price;
             reservation.reservedRooms=reservation.reservedRooms.concat(room._id);
             await reservation.save();
-            room.reservation = room.reservation.concat(reservation._id);
+            room.reservations = room.reservations.concat({reservation: reservation._id});
             await room.save();
 
         } catch (e) {
@@ -67,7 +71,9 @@ class ReservationClass {
               await Room.update({_id: room},
                     {
                         $pull: {
-                            reservation: _id
+                            reservations:{
+                                reservation: _id
+                            }
                         }
                     });
             }

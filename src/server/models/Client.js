@@ -16,6 +16,7 @@ const ClientSchema = new mongoose.Schema({
     role: {type: String},
     slug: {type: String},
     reservation: [{type: mongoose.Schema.ObjectId, ref: 'Reservation'}],
+    opinions: [{type: mongoose.Schema.ObjectId, ref: 'Opinion'}],
     tokens: [{
         access: {
             type: String,
@@ -191,7 +192,9 @@ ClientSchema.pre('save', function (next) {
 });
 
 ClientSchema.pre('remove', function(next){
-    this.model('Reservation').remove({user: this._id}, next);
+    this.model('Reservation').remove({user: this._id});
+    this.model('Opinion').remove({_id: {$in: this.opinions}});
+    next();
 });
 
 ClientSchema.loadClass(ClientClass);
