@@ -17,6 +17,7 @@ import CardMedia from "@material-ui/core/CardMedia/CardMedia";
 import 'react-dates/lib/css/_datepicker.css'
 import CardActionArea from "@material-ui/core/CardActionArea/CardActionArea";
 import CardContent from "@material-ui/core/CardContent/CardContent";
+import cart from "../cart/cart-helper";
 
 const styles = theme => ({
     card: {
@@ -112,6 +113,7 @@ class Search extends Component {
                     console.log(data)
                 }
             })
+            cart.removeReservation();
         }
     }
 
@@ -189,7 +191,7 @@ class Search extends Component {
                     </CardContent>
 
 
-                    <Rooms searchResults={this.state.searchResults} searched={this.state.searched}/>
+                    <Rooms searchResults={this.state.searchResults} searched={this.state.searched} startDate={this.state.startDate} endDate={this.state.endDate}/>
 
 
                 </Card>

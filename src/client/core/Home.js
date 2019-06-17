@@ -64,7 +64,7 @@ class Home extends Component {
                         )}
 
                     </Grid>
-                    <Grid itesm xs={4} sm={4}>
+                    <Grid items xs={4} sm={4}>
                         {/*<Suggestions products={this.state.searchResult}/>*/}
                     </Grid>
                 </Grid>

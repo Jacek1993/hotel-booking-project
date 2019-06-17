@@ -2,18 +2,11 @@ import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 import {withStyles} from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
-import Card from '@material-ui/core/Card'
 import CardMedia from '@material-ui/core/CardMedia'
-import IconButton from '@material-ui/core/IconButton'
-import Edit from '@material-ui/icons/Edit'
-import Icon from '@material-ui/core/Icon'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
 import Typography from '@material-ui/core/Typography'
 import {Link} from 'react-router-dom'
-import Divider from '@material-ui/core/Divider'
-import DeleteProduct from './DeleteReservation'
 import {SingleDatePicker} from 'react-dates'
 import 'react-dates/lib/css/_datepicker.css'
 import {loadRoomWithReservations} from "../api/api-reservation";
@@ -23,7 +16,6 @@ import Avatar from "@material-ui/core/Avatar/Avatar";
 import moment from 'moment'
 import Paper from "@material-ui/core/Paper/Paper";
 import Grid from "@material-ui/core/Grid/Grid";
-import GridListTileBar from "@material-ui/core/GridListTileBar/GridListTileBar";
 import RemoveReservation from "./RemoveReservation";
 
 const styles = theme => ({

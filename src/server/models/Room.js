@@ -149,9 +149,10 @@ class RoomClass {
 }
 
 RoomSchema.pre('remove', function (next) {
-    this.model('Reservation').remove({reservedRoom: this._id});
-    this.model('Opinion').remove({_id: {$in: this.opinions}});
-    next();
+
+    this.model('Reservation').remove({reservedRoom: this._id}, next);
+    this.model('Opinion').remove({_id: {$in: this.opinions}}, next);
+
 })
 
 RoomSchema.loadClass(RoomClass);

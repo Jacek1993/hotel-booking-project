@@ -1,16 +1,20 @@
 import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
-import  bcrypt from 'bcrypt';
-import  bcryptjs from 'bcryptjs';
-import  generateSlug from '../utils/slugify';
-import  jsonWebToken from '../utils/jsonWebToken';
-import  validator from 'validator';
+import bcrypt from 'bcrypt';
+import bcryptjs from 'bcryptjs';
+import generateSlug from '../utils/slugify';
+import jsonWebToken from '../utils/jsonWebToken';
+import validator from 'validator';
 
 
 const ClientSchema = new mongoose.Schema({
     firstName: {type: String, require: true},
     lastName: {type: String, require: true},
-    email: {type: String, require: true, validate: {validator: validator.isEmail, message: '{VALUE} is not a valid email'}},
+    email: {
+        type: String,
+        require: true,
+        validate: {validator: validator.isEmail, message: '{VALUE} is not a valid email'}
+    },
     phoneNumber: {type: String},
     password: {type: String, require: true},
     role: {type: String},
@@ -27,7 +31,7 @@ const ClientSchema = new mongoose.Schema({
 
         }
     }],
-    photography:{type: String}
+    photography: {type: String}
 
 });
 
@@ -128,7 +132,7 @@ class ClientClass {
             return Promise.reject(`cannot find user with this token ${token}`)
         }
         console.log('in findByToken()')
-        return  user.findOne({
+        return user.findOne({
             '_id': decode._id,
             'tokens.token': token,
             'tokens.access': 'auth'
@@ -165,6 +169,60 @@ class ClientClass {
         })
     }
 
+    static async findAnyProcessedReservation(slug) {
+        return await Client.aggregate([
+            {
+                $match: {slug: slug}
+            },
+            {
+                $lookup: {
+                    from: 'reservations',
+                    localField: 'reservation',
+                    foreignField: '_id',
+                    as: 'reservation_table'
+                }
+            },
+            {$unwind: '$reservation_table'},
+            {
+                $lookup: {
+                    from: 'rooms',
+                    localField: 'reservation_table.reservedRooms',
+                    foreignField: '_id',
+                    as: 'room_table'
+                }
+            },
+            {$match: {"reservation_table.state": 'PROCESSED'}},
+            {
+                $project: {
+                    "reservation_table.name": 0,
+                    "reservation_table.reservedRooms": 0,
+                    "reservation_table.userSlug": 0,
+                    "reservation_table.user": 0,
+                    "reservation_table.__v": 0,
+                    "reservation_table.state": 0,
+                    "reservation_table._id": 0,
+                    "reservation_table.totalAmount": 0,
+                    "reservation_table.createdAt": 0,
+                    _id: 0,
+                    firstName: 0,
+                    lastName: 0,
+                    slug: 0,
+                    email: 0,
+                    password: 0,
+                    reservation: 0,
+                    tokens: 0,
+                    opinions: 0,
+                    photography: 0,
+                    phoneNumber: 0,
+                    role: 0,
+                    __v: 0
+                }
+            }
+
+        ])
+
+
+    }
 
 
 }
@@ -191,10 +249,10 @@ ClientSchema.pre('save', function (next) {
     }
 });
 
-ClientSchema.pre('remove', function(next){
-    this.model('Reservation').remove({user: this._id});
-    this.model('Opinion').remove({_id: {$in: this.opinions}});
-    next();
+ClientSchema.pre('remove', function (next) {
+    this.model('Reservation').remove({user: this._id}, next);
+    this.model('Opinion').remove({_id: {$in: this.opinions}}, next);
+
 });
 
 ClientSchema.loadClass(ClientClass);

@@ -13,6 +13,8 @@ import PhotosUpload from "./room/PhotosUpload";
 import EditRoom from "./room/EditRoom";
 import ClientRoom from "./room/ClientRoom";
 import NotFoundPage from "./NotFoundPage";
+import CartView from "./cart/CartView";
+import {getReservationSlug} from "./api/utils";
 
 
 
@@ -48,6 +50,7 @@ class MainRouter extends Component{
                 <Route path={`/user/room/images/:slug`} component={withAuth(PhotosUpload)}/>
                 <Route path={`/user/room/:slug`} component={ClientRoom} />
                 <Route path={`/admin/room/:slug/reservation/:reservationSlug`} component={withAuth(EditRoom)}/>
+                <Route path={`/cart`} component={withAuth(CartView)}/>
                 <Route component={NotFoundPage}/>
             </Switch>
         </div>)

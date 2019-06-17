@@ -10,6 +10,10 @@ import {signOut} from "../api/api-user";
 import PropTypes from 'prop-types';
 import {isAuthenticated} from '../api/auth-helper'
 import Redirect from "react-router-dom/es/Redirect";
+import Badge from "@material-ui/core/Badge/Badge";
+import CartIcon from '@material-ui/icons/ShoppingCart'
+import cart from '../cart/cart-helper'
+import {getReservationSlug} from "../api/utils";
 
 const isActive = (history, path) => {
     if (history.location.pathname === path)
@@ -35,7 +39,7 @@ class MenuShow extends Component {
             role: 'user',
             redirectToHome: false
         }
-        this.submit=this.submit.bind(this)
+        this.submit = this.submit.bind(this)
     }
 
     componentDidMount() {
@@ -65,7 +69,7 @@ class MenuShow extends Component {
                 this.setState({redirectToHome: true})
             }
         })
-        this.setState({status: false})
+        cart.removeReservation(()=>this.setState({status: false}));
 
         this.forceUpdate()
 
@@ -75,7 +79,7 @@ class MenuShow extends Component {
 
     render() {
 
-        if(this.state.redirectToHome){
+        if (this.state.redirectToHome) {
             this.setState({redirectToHome: false})
         }
 
@@ -83,16 +87,27 @@ class MenuShow extends Component {
             <AppBar position="static">
                 <Toolbar>
                     <Typography type="title" color="inherit">
-                       Hotel Booking App
+                        Hotel Booking App
                     </Typography>
                     <Link to="/">
                         <IconButton aria-label="Home" style={isActive(this.props.history, '/')}>
                             <HomeIcon/>
                         </IconButton>
                     </Link>
-                    <Link to="/users">
-                        <Button style={isActive(this.props.history, '/users')}>Users</Button>
-                    </Link>
+                    {
+                        this.state.status && (
+                            <span>
+                                <Link to={`/cart`}>
+                                    <Button style={isActive(this.props.history, `/cart`)}>
+                                        Cart
+                                     <Badge color="secondary" badgeContent={cart.itemTotal()} style={{'marginLeft': '7px'}}>
+                                         <CartIcon/>
+                                     </Badge>
+                                    </Button>
+                                </Link>
+                            </span>
+                        )
+                    }
                     <div style={{'position': 'absolute', 'right': '10px'}}><span style={{'float': 'right'}}>
                     {
                         !this.state.status && (<span>
@@ -111,7 +126,7 @@ class MenuShow extends Component {
                             this.state.role === 'admin' && this.state.status
                             && (
                                 <span>
-                                    <Link  to="/user/rooms">
+                                    <Link to="/user/rooms">
                                     <Button color="inherit" style={isActive(this.props.history, '/user/rooms')}>
                                         Admin things
                                     </Button>
@@ -122,7 +137,7 @@ class MenuShow extends Component {
                         {
                             this.state.status
                             && (<span>
-                                <Link to={`/`} >
+                                <Link to={`/`}>
                                   <Button style={isActive(this.props.history, "/")} color="inherit" onClick={() => {
                                       this.submit();
                                   }}>Sign out</Button></Link>

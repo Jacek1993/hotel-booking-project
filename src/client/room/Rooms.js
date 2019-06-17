@@ -8,7 +8,7 @@ import GridListTileBar from '@material-ui/core/GridListTileBar'
 import {Link} from 'react-router-dom'
 import {config} from '../../config/clientConfig'
 import {convertImageUrl} from '../api/utils'
-// import AddToCart from './../cart/AddToCart'
+import AddToCart from '../cart/AddToCart'
 
 const styles = theme => ({
     root: {
@@ -49,6 +49,13 @@ const styles = theme => ({
         marginBottom:'5px',
         color:'rgb(189, 222, 219)',
         display:'block'
+    },
+    addCart: {
+        width: '35px',
+        height: '35px',
+        padding: '10px 12px',
+        borderRadius: '0.25em',
+        backgroundColor: '#5f7c8b'
     }
 })
 
@@ -67,9 +74,9 @@ const Products =(props)=> {
                                     <GridListTileBar className={classes.tileBar}
                                                      title={<Link to={`/room/${room.slug}`} className={classes.tileTitle}>{room.description[0]}</Link>}
                                                      subtitle={<span>$ {room.roomNumber}</span>}
-                                                     // actionIcon={
-                                                     //     {/*<AddToCart item={room}/>*/}
-                                                     // }
+                                                     actionIcon={
+                                                         <AddToCart item={room} startDate={props.startDate} endDate={props.endDate} cartStyle={classes.addCart}/>
+                                                     }
                                     />
                                 </GridListTile>
                             )))}

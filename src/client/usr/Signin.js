@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import Card  from '@material-ui/core/Card'
+import Card from '@material-ui/core/Card'
 import CardActions from '@material-ui/core/CardActions'
 import CardContent from '@material-ui/core/CardContent'
 import Button from '@material-ui/core/Button'
@@ -8,8 +8,9 @@ import Typography from '@material-ui/core/Typography'
 import Icon from '@material-ui/core/Icon'
 import PropTypes from 'prop-types'
 import {withStyles} from '@material-ui/core/styles'
-import {signin} from '../api/api-user'
+import {loadOpenedReservations, signin} from '../api/api-user'
 import Redirect from "react-router-dom/es/Redirect";
+import {loadRoomWithReservations} from "../api/api-reservation";
 
 
 const styles = theme => ({
@@ -40,7 +41,7 @@ const styles = theme => ({
 
 class Signin extends Component {
 
-    constructor(props){
+    constructor(props) {
         super(props);
         this.state = {
             email: '',
@@ -51,8 +52,8 @@ class Signin extends Component {
             role: ''
         };
 
-        this.clickSubmit=this.clickSubmit.bind(this);
-        this.handleChange=this.handleChange.bind(this);
+        this.clickSubmit = this.clickSubmit.bind(this);
+        this.handleChange = this.handleChange.bind(this);
     }
 
 
@@ -62,21 +63,29 @@ class Signin extends Component {
             password: this.state.password || undefined
         }
 
-       signin(user).then(response=>{
-           console.log(response)
-           if(response.error){
-               this.setState({error: response.error});
-           }else{
-               this.state.slug=user.slug=response.slug;
-               this.state.role=response.slug;
+        signin(user).then(response => {
+            console.log(response)
+            if (response.error) {
+                this.setState({error: response.error});
+            } else {
+                this.state.slug = user.slug = response.slug;
+                this.state.role = response.slug;
 
-               this.setState({redirectToReferrer: true});
-                //last line of code is a callback which sends data to it's parent
-               console.log('SLUG', user.slug)
-               this.props.slugCallback({slug: user.slug, role:response.role });
-           }
+                this.setState({redirectToReferrer: true});
 
-       });
+                loadOpenedReservations().then((data) => {
+                    if (!data.error) {
+                        if (typeof window !== 'undefined') {
+                            localStorage.setItem('reservation', JSON.stringify(data[0].reservation_table))
+                            localStorage.setItem('cart', JSON.stringify(data[0].room_table))
+                        }
+                    }
+                })
+                this.props.slugCallback({slug: user.slug, role: response.role});
+            }
+
+        });
+
 
     }
 
@@ -86,7 +95,7 @@ class Signin extends Component {
 
     render() {
         const {classes} = this.props
-        if(this.state.redirectToReferrer){
+        if (this.state.redirectToReferrer) {
             return (<Redirect to={`/secret/${this.state.slug}`}/>)
         }
         return (
@@ -95,8 +104,10 @@ class Signin extends Component {
                     <Typography type="headline" component="h2" className={classes.title}>
                         Sign In
                     </Typography>
-                    <TextField id="email" type="email" label="Email" className={classes.textField} value={this.state.email} onChange={this.handleChange('email')} margin="normal"/><br/>
-                    <TextField id="password" type="password" label="Password" className={classes.textField} value={this.state.password} onChange={this.handleChange('password')} margin="normal"/>
+                    <TextField id="email" type="email" label="Email" className={classes.textField}
+                               value={this.state.email} onChange={this.handleChange('email')} margin="normal"/><br/>
+                    <TextField id="password" type="password" label="Password" className={classes.textField}
+                               value={this.state.password} onChange={this.handleChange('password')} margin="normal"/>
                     <br/> {
                     this.state.error && (<Typography component="p" color="error">
                         <Icon color="error" className={classes.error}>error</Icon>
@@ -105,7 +116,8 @@ class Signin extends Component {
                 }
                 </CardContent>
                 <CardActions>
-                    <Button color="primary" variant="raised" onClick={this.clickSubmit} className={classes.submit}>Submit</Button>
+                    <Button color="primary" variant="raised" onClick={this.clickSubmit}
+                            className={classes.submit}>Submit</Button>
                 </CardActions>
             </Card>
         )

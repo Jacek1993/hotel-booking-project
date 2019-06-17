@@ -20,7 +20,7 @@ class RemoveReservation extends Component {
         this.setState({open: true})
     }
 
-    deleteShop = () => {
+    deleteReservation = () => {
         console.log(this.props.reservation.slug);
         const headers = {
             owner: this.props.reservation.userSlug
@@ -51,14 +51,14 @@ class RemoveReservation extends Component {
         <DialogTitle>{`Delete reservation of : ${this.props.reservation.userSlug}`}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Confirm to delete reservation {this.props.description ? this.props.description[0] : ''}
+            Confirm to delete reservation
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={this.handleRequestClose} color="primary">
             Cancel
           </Button>
-          <Button onClick={this.deleteShop} color="secondary" autoFocus="autoFocus">
+          <Button onClick={this.deleteReservation} color="secondary" autoFocus="autoFocus">
             Confirm
           </Button>
         </DialogActions>

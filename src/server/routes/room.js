@@ -2,6 +2,7 @@ import express from 'express';
 import multer from 'multer';
 import {config} from '../../config/serverConfig';
 import fs from 'fs'
+import {check, validationResult} from 'express-validator/check'
 
 
 const router = express.Router();
@@ -36,8 +37,12 @@ const upload = multer({
 });
 
 //creating Room
-router.post('/', authenticate, async (req, res) => {
+router.post('/', authenticate,[check('roomNumber').isNumeric(), check('description').not().isEmpty(), check('pricing.retail').isNumeric(), check('pricing.sale').isNumeric(), check('personAmount').isNumeric(), check('tags').not().isEmpty()], async (req, res) => {
     console.log(req.body.roomNumber + 'This is our body')
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({ error: errors.array().map(e=>e.param+' '+e.msg).reduce((init, e)=>init+=e, '') });
+    }
     try {
         if (req.role === "admin") {
             console.log('CREATING ROOM')
@@ -191,7 +196,12 @@ router.get('/:slug/reservation/:startDate', authenticate, async (req, res) => {
 
 });
 
-router.post('/update/:slug', authenticate, async (req, res) => {
+router.post('/update/:slug',[ check('description').not().isEmpty(), check('pricing').contains('retail').contains('sale'), check('tags').not().isEmpty()], authenticate, async (req, res) => {
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({ error: errors.array().map(e=>e.param+' '+e.msg).reduce((init, e)=>init+=e, '') });
+    }
     try {
         if (req.role === 'admin') {
             const room = await Room.findOne({slug: req.params.slug});

@@ -20,11 +20,16 @@ const create=({firstName, lastName, email, password })=>sendRequest(`/client/sig
      body:JSON.stringify(userData)
  });
 
+ const loadOpenedReservations=()=>sendRequest(`/client/reservation/opened`,{
+     method: 'GET'
+ });
+
 
 export {
     create,
     signin,
     signOut,
     userCredentials,
-    updateUser
+    updateUser,
+    loadOpenedReservations
 }

@@ -42,19 +42,20 @@ class ReservationClass {
 
 
     static async addRoom(roomSlug, reservationSlug) {
-        let reserv = this;
-        console.log('In Add room Function');
+
+        console.log(`somthing is no yes ${roomSlug}    ${reservationSlug}`);
         try {
             let room = await Room.findOne({slug: roomSlug});
 
             let pricing = room.pricing;
-            let reservation = await reserv.findOne({slug: reservationSlug});
+            let reservation = await Reservation.findOne({slug: reservationSlug});
+            console.log(reservation)
             let price = pricing.sale*reservation.duration;
             price += reservation.totalAmount;
             reservation.totalAmount = price;
             reservation.reservedRooms=reservation.reservedRooms.concat(room._id);
             await reservation.save();
-            room.reservations = room.reservations.concat({reservation: reservation._id});
+            room.reservations = room.reservations.concat(reservation._id);
             await room.save();
 
         } catch (e) {
@@ -71,9 +72,7 @@ class ReservationClass {
               await Room.update({_id: room},
                     {
                         $pull: {
-                            reservations:{
-                                reservation: _id
-                            }
+                            reservations:_id
                         }
                     });
             }
@@ -81,6 +80,21 @@ class ReservationClass {
             return _id;
         } catch (e) {
             return Promise.reject(`Something went wrong ${e}`);
+        }
+    }
+
+    static async deleteRoomFromReservation(reservationSlug, roomSlug){
+        try{
+            const room=await Room.findOne({slug: roomSlug});
+            const reservation=await Reservation.findOne({slug: reservationSlug});
+            console.log(room);
+            console.log(reservation)
+            room.reservations.splice(room.reservations.indexOf(reservation._id),1)
+            reservation.reservedRooms.splice(reservation.reservedRooms.indexOf(room._id), 1);
+            await reservation.save();
+            await room.save();
+        }catch (e) {
+            return Promise.reject(e);
         }
     }
     static async changeState(reservationSlug, newState){

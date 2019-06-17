@@ -8,6 +8,7 @@ import email from '../email/config';
 import {Client} from '../models/Client'
 
 
+
 router.post('/',authenticate, async (req, res) => {
     console.log('post reservation')
     try {
@@ -74,6 +75,19 @@ router.delete('/purge', authenticate, async (req, res) => {
         })
     }
 });
+
+router.delete('/',authenticate, async(req,res)=>{
+    try{
+        const roomSlug=req.query.roomSlug;
+        const reservationSlug=req.query.reservationSlug;
+        await Reservation.deleteRoomFromReservation(reservationSlug, roomSlug);
+        res.status(200).send('OK')
+    }catch (e) {
+        res.status(400).json({
+            error: e
+        })
+    }
+})
 
 router.put('/change', authenticate, async (req, res) => {
     try {

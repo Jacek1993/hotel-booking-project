@@ -1,4 +1,6 @@
 import  mongoose from 'mongoose';
+import {Room} from './Room'
+import {Client} from './Client'
 
 
 const OpinionSchema = new mongoose.Schema({
@@ -8,7 +10,7 @@ const OpinionSchema = new mongoose.Schema({
     rating: {type: Number},
     owner: {type:mongoose.Schema.Types.ObjectId, ref: 'Client'},
     helpfulVotes: {type: Number, default: 0},
-    votersId: [{type: mongoose.Schema.Types.ObjectId, ref: 'Client' , unique: true}]
+    votersId: [{type: mongoose.Schema.Types.ObjectId, ref: 'Client' }]
 });
 
 class OpinionClass {
@@ -28,6 +30,23 @@ class OpinionClass {
 
         }catch (e) {
             return Promise.reject(e);
+        }
+    }
+
+    static async deleteOpinion(opinionId, roomSlug, clientSlug){
+        try{
+            await Room.update({slug: roomSlug}, {
+                $pull:{
+                    opinions: opinionId
+                }
+            });
+            await Client.update({slug: clientSlug}, {
+                $pull:{
+                    opinions: opinionId
+                }
+            })
+        }catch(e){
+            return Promise.reject(e)
         }
     }
 

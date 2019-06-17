@@ -1,8 +1,7 @@
 import express from 'express';
-import {ObjectId} from 'mongodb';
 import {deleteFile} from '../db/mongoose';
 import '../config/config';
-import {body, buildCheckFunction, validationResult} from 'express-validator/check'
+import {check, validationResult} from 'express-validator/check'
 
 
 const router = express.Router();
@@ -15,10 +14,15 @@ import errorHandler from '../db/dbErrorHandler'
 
 
 const upload = multer({storage});
-const checkBody=buildCheckFunction(['body']);
 
 
-router.post('/signup', async (req, res) => {
+
+router.post('/signup', [check('email').isEmail(), check('firstName').isAlpha(), check('lastName').isAlpha(), check('password').isLength({min: 6})], async (req, res) => {
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({ error: errors.array().map(e=>e.param+' '+e.msg).reduce((init, e)=>init+=e, '') });
+    }
     try {
 
         if (!await Client.findOne({email: req.body.email})) {
@@ -49,7 +53,6 @@ router.post('/signup', async (req, res) => {
                 });
         }
     } catch (e) {
-        console.log(`ERRRORRRRRR ${e}`);
         res.status(400)
             .json({
                 error: errorHandler.getErrorMessage(e)
@@ -57,7 +60,12 @@ router.post('/signup', async (req, res) => {
     }
 });
 
-router.post('/login', async (req, res) => {
+router.post('/login',[check('email').isEmail(), check('password').isLength({min: 6})], async (req, res) => {
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({ error: errors.array().map(e=>e.param+' '+e.msg).reduce((init, e)=>init+=e, '') });
+    }
     try {
         let body = req.body;
         const client = await Client.findByCredentials(body.email, body.password);
@@ -119,34 +127,19 @@ router.get('/:slug', authenticate, async (req, res) => {
     }
 });
 
-//dziala XD
-//isEmpty it's mean that validator force filed value to be EMPTY
-router.post('/upload/:slug',authenticate,
-    [ checkBody('firstName').isEmpty().withMessage('firstName is required'),
-    checkBody('lastName').isEmpty().withMessage('lastName is required'),
-    checkBody('email').isEmpty().withMessage('email is required'),
-    checkBody('phoneNumber').isEmpty().withMessage('phoneNumber is required')],
-    upload.single('file'), (req, res) => {
 
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            console.log(JSON.stringify(errors.array(true)));
-            return res.status(422).json({error: errors.array()})
-        }
+router.post('/upload/:slug',authenticate, upload.single('file'), (req, res) => {
+
         const body=req.body;
-
         Client.findByToken(req.token).then((client) => {
             console.log(client.photography);
             if(client.photography){
-                console.log('something');
                 let error=deleteFile(client.photography);
-
                 if(error){
                     console.log(error);
                     res.status(400).send(error);
                 }
             }
-            console.log('SAVING  ',JSON.stringify(req.file))
             client.firstName=body.firstName;
             client.lastName=body.lastName;
             client.phoneNumber=body.phoneNumber;
@@ -160,9 +153,24 @@ router.post('/upload/:slug',authenticate,
             res.status(400).send(e);
         });
 
-
-        // console.log(${JSON.stringify(req.file});
     });
+
+router.get('/reservation/opened', authenticate,async (req,res)=>{
+    console.log('something is no yer 1')
+    try{
+        console.log(req.client.slug)
+        console.log('something is no yes')
+        const client=await Client.findAnyProcessedReservation(req.client.slug);
+        res.status(200).send(client);
+    }catch(e){
+        console.log('ERRRORRRRR')
+        res.status(400).json({
+            error: e
+        })
+    }
+})
+
+
 
 router.route('/profile/image/:avatar')
     .get(getOneFile);
