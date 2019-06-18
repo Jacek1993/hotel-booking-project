@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest",
     "coverage": "jest --coverage",
-    "buildDev": "rm -rf dist && webpack --mode development --config webpack.server.config.js && webpack --mode development --config webpack.dev.config.js && node ./dist/server.js",
+    "buildDev": "rm -rf dist && node_modules/.bin/webpack --mode development --config webpack.server.config.js && webpack --mode development --config webpack.dev.config.js && node ./dist/server.js",
     "buildProd": "rm -rf dist && webpack --mode production --config webpack.server.config.js && webpack --mode production --config webpack.prod.config.js",
     "start": "node ./dist/server.js",
     "heroku-postbuild": "npm run buildDev"
@@ -56,7 +56,7 @@
     "winston": "^3.1.0"
   },
   "engines": {
-    "node": "8.10"
+    "node": ">7.0.0"
   },
   "jest": {
     "moduleNameMapper": {
