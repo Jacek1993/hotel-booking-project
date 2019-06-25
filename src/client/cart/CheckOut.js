@@ -10,8 +10,10 @@ import {withStyles} from '@material-ui/core/styles'
 import cart from './cart-helper.js'
 import {Link} from 'react-router-dom'
 import {config} from "../../config/clientConfig";
-import {convertImageUrl, getReservationSlug} from "../api/utils";
+import {convertImageUrl} from "../api/utils";
 import Redirect from "react-router-dom/es/Redirect";
+import {changeState, loadReservation} from "../api/api-reservation";
+import queryString from "querystring";
 
 const styles = theme => ({
     card: {
@@ -84,30 +86,58 @@ const styles = theme => ({
         fontSize: '0.90em',
         color: '#78948f'
     },
-   flexContainer:{
+    flexContainer: {
         display: 'flex',
-       justifyContent: 'space-between',
-       margin: '20px 0px'
-   }
+        justifyContent: 'space-between',
+        margin: '20px 0px'
+    }
 
 })
 
-class CartItems extends Component {
-    state = {
-        cartItems: [],
-        redirectToHome: false
+class CheckOut extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            reservation: {
+                reservedRooms: [],
+                totalAmount: 0,
+                startDate: 0,
+                finishDate: 0,
+                name: '',
+                slug: ''
+            },
+            redirectToHome: false
+        }
+
     }
+
 
     componentDidMount = () => {
+        console.log(JSON.stringify(this.props.match.params.reservationSlug))
         this.setState({cartItems: cart.getCart()})
+
+        loadReservation(this.props.match.params.reservationSlug).then((data) => {
+            if (data.error) {
+                console.log(data.error)
+                this.setState({redirectToHome: true})
+            }
+            else {
+                console.log(data)
+                this.setState({reservation: data});
+                const query={};
+                query.newState = 'IN_CART'
+                query.reservationSlug = this.state.reservation.slug;
+                console.log(JSON.stringify(query))
+                changeState(queryString.stringify(query)).then((data)=>{
+                    if(data.error){
+                        console.log(data.error);
+                    }
+                    console.log('update state')
+                })
+            }
+        })
     }
 
-
-    getTotal() {
-        return this.state.cartItems.reduce((a, b) => {
-            return a + b.pricing.sale
-        }, 0)
-    }
 
     removeItem = index => event => {
         let cartItems = cart.removeItem(index)
@@ -115,26 +145,35 @@ class CartItems extends Component {
         this.setState({cartItems: cartItems})
     }
 
-    removeReservation=()=>{
+    pay=()=>{
+        const query={};
+        query.newState = 'BOOKED'
+        query.reservationSlug = this.state.reservation.slug;
+        changeState(queryString.stringify(query)).then((data)=>{
+            if(data.error){
+                console.log(data.error);
+            }
+            console.log('update state')
+        })
+    }
+
+    removeReservation = () => {
         cart.removeReservation();
         this.setState({redirectToHome: true})
     }
 
-    openCheckout = () => {
-        this.props.setCheckout(true)
-    }
 
     render() {
         const {classes} = this.props;
-        if(this.state.redirectToHome){
-           return ( <Redirect to={'/'}/>)
+        if (this.state.redirectToHome) {
+            return (<Redirect to={'/'}/>)
         }
         return (<Card className={classes.card}>
             <Typography type="title" className={classes.title}>
                 Shopping Cart
             </Typography>
-            {this.state.cartItems.length > 0 ? (<span>
-          {this.state.cartItems.map((item, i) => {
+            {this.state.reservation.reservedRooms.length > 0 ? (<span>
+          {this.state.reservation.reservedRooms.map((item, i) => {
               return <span key={i}><Card className={classes.cart}>
               <CardMedia
                   className={classes.cover}
@@ -155,7 +194,7 @@ class CartItems extends Component {
                 </CardContent>
                 <div className={classes.subheading}>
 
-                            <Button className={classes.removeButton} color="primary" onClick={this.removeItem(i)}>x Remove</Button>
+                            <Button color="primary" onClick={this.removeItem(i)}>x Remove</Button>
                 </div>
               </div>
             </Card>
@@ -163,28 +202,32 @@ class CartItems extends Component {
           </span>
           })
           }
+                    <Divider/>
+          <div>
+              <Typography type="subheading" component="h3" className={classes.price}>
+                   Total  Price: {this.state.reservation.totalAmount}
+              </Typography>
+          </div>
       </span>) :
                 <Typography type="subheading" component="h3" color="primary">No items added to your cart.</Typography>
             }
 
             <div className={classes.flexContainer}>
                 <Link to="/">
-                    <Button variant="raised" >Continue Shopping</Button>
+                    <Button variant="raised">Continue Shopping</Button>
                 </Link>
                 <Button variant="raised" onClick={this.removeReservation}>REMOVE RESERVATION</Button>
-                <Link to={`/checkout/${getReservationSlug()}`}>
-                <Button variant="raised">Check Out</Button>
-                </Link>
+                <Button variant="raised" onClick={this.pay}>Pay</Button>
             </div>
 
         </Card>)
     }
 }
 
-CartItems.propTypes = {
+CheckOut.propTypes = {
     classes: PropTypes.object.isRequired,
     checkout: PropTypes.bool.isRequired,
     setCheckout: PropTypes.func.isRequired
 }
 
-export default withStyles(styles)(CartItems)
+export default withStyles(styles)(CheckOut)

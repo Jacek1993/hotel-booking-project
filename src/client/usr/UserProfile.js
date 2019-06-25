@@ -9,13 +9,10 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
 import ListItemText from '@material-ui/core/ListItemText'
 import Avatar from '@material-ui/core/Avatar'
 import IconButton from '@material-ui/core/IconButton'
-import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
 import Edit from '@material-ui/icons/Edit'
-import Person from '@material-ui/icons/Person'
 import Divider from '@material-ui/core/Divider'
-import {Redirect, Link} from 'react-router-dom'
-import {isAuthenticated} from '../api/auth-helper';
+import { Link} from 'react-router-dom'
 import { userCredentials} from '../api/api-user';
 import ProfileTabs from "./ProfileTabs";
 
@@ -68,9 +65,6 @@ class Secret extends Component {
     }
 
     componentDidMount(){
-        // console.log('BEFORE SLUGGG', this.props.match.params)
-
-        // console.log('LSUGGGGG' , param1)
         this.setState({slug: this.props.match.url});
 
     }
@@ -131,18 +125,3 @@ Secret.propTypes = {
 }
 
 export default withStyles(styles)(Secret)
-
-
-/*
-  return (
-            <div>
-                <h1>Secret</h1>
-                <p>{JSON.stringify(user)}</p>
-                {
-                    this.state.slug &&
-                    <img src={`/client/profile/image/${this.state.slug}`} alt=""/>
-                }
-
-            </div>
-        );
- */

@@ -156,14 +156,10 @@ router.post('/upload/:slug',authenticate, upload.single('file'), (req, res) => {
     });
 
 router.get('/reservation/opened', authenticate,async (req,res)=>{
-    console.log('something is no yer 1')
     try{
-        console.log(req.client.slug)
-        console.log('something is no yes')
         const client=await Client.findAnyProcessedReservation(req.client.slug);
         res.status(200).send(client);
     }catch(e){
-        console.log('ERRRORRRRR')
         res.status(400).json({
             error: e
         })

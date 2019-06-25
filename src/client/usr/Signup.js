@@ -68,13 +68,14 @@ class Signup extends Component {
             password: this.state.password || undefined
         };
         create(user).then((data) => {
-            // console.log(data);
+
             if (data.error) {
                 this.setState({error: data.error})
             } else {
-                // console.log('InCreate Method', this.state.slug)
+
                 this.state.slug=user.slug=data.slug;
                 this.setState({redirectToUserPage: true});
+                localStorage.setItem('logIn', 'logged')
             }
         })
     }
@@ -82,7 +83,7 @@ class Signup extends Component {
     render() {
         const {classes} = this.props
         if (this.state.redirectToUserPage) {
-            return (<Redirect to={`/secret/${this.state.slug}`}/>)
+            return (<Redirect to={`/`}/>)
         }
 
         return (<div>

@@ -9,11 +9,9 @@ import {Link, withRouter} from 'react-router-dom'
 import {signOut} from "../api/api-user";
 import PropTypes from 'prop-types';
 import {isAuthenticated} from '../api/auth-helper'
-import Redirect from "react-router-dom/es/Redirect";
 import Badge from "@material-ui/core/Badge/Badge";
 import CartIcon from '@material-ui/icons/ShoppingCart'
 import cart from '../cart/cart-helper'
-import {getReservationSlug} from "../api/utils";
 
 const isActive = (history, path) => {
     if (history.location.pathname === path)
@@ -34,7 +32,6 @@ class MenuShow extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            status: false,
             slug: '',
             role: 'user',
             redirectToHome: false
@@ -47,33 +44,14 @@ class MenuShow extends Component {
 
     }
 
-    componentWillReceiveProps(nextProps) {
-        console.log(nextProps)
-        if (nextProps.slug !== '') {
-            this.setState({slug: nextProps.slug})
-            this.setState({status: true})
-            this.forceUpdate()
-            this.setState({role: nextProps.role})
-        }
-        console.log(this.state.slug);
-    }
-
-    //this function prevents from changing state if it is empty because react renders complete DOM tree for any changes
-    shouldComponentUpdate(nextProps, nextState) {
-        return this.state.status || this.state.redirectToHome
-    }
-
     submit = () => {
         signOut().then(response => {
             if (!response.error) {
                 this.setState({redirectToHome: true})
             }
         })
-        cart.removeReservation(()=>this.setState({status: false}));
-
-        this.forceUpdate()
-
-
+        cart.emptyCart(()=>this.setState({status: false}));
+        localStorage.removeItem('logIn')
     };
 
 
@@ -95,7 +73,7 @@ class MenuShow extends Component {
                         </IconButton>
                     </Link>
                     {
-                        this.state.status && (
+                        localStorage.getItem('logIn')!==null && (
                             <span>
                                 <Link to={`/cart`}>
                                     <Button style={isActive(this.props.history, `/cart`)}>
@@ -110,7 +88,7 @@ class MenuShow extends Component {
                     }
                     <div style={{'position': 'absolute', 'right': '10px'}}><span style={{'float': 'right'}}>
                     {
-                        !this.state.status && (<span>
+                        localStorage.getItem('logIn')===null && (<span>
           <Link to="/signup">
             <Button style={isActive(this.props.history, '/signup')}>Sign up
             </Button>
@@ -123,7 +101,7 @@ class MenuShow extends Component {
         </span>)
                     }
                         {
-                            this.state.role === 'admin' && this.state.status
+                            this.state.role === 'admin' &&   localStorage.getItem('logIn')!==null
                             && (
                                 <span>
                                     <Link to="/user/rooms">
@@ -135,7 +113,7 @@ class MenuShow extends Component {
                             )
                         }
                         {
-                            this.state.status
+                            localStorage.getItem('logIn')!==null
                             && (<span>
                                 <Link to={`/`}>
                                   <Button style={isActive(this.props.history, "/")} color="inherit" onClick={() => {

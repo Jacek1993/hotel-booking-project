@@ -66,11 +66,11 @@ app.get('/checkToken', authenticate, (req, res)=>{
 });
 
 //todo this is backend protection
-// app.get('*', (req, res, next) => {
-//     res.sendFile(HTML_FILE)
-// })
+app.get('*', (req, res, next) => {
+    res.sendFile(HTML_FILE)
+})
 
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 9000
 
 app.listen(PORT, () => {
     console.log(`App listening to ${PORT}....`)

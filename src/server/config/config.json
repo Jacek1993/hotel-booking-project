@@ -1,7 +1,7 @@
 
 {
   "test":{
-    "PORT": 3000,
+    "PORT": 9000,
     "MONGODB_URI": "mongodb://localhost:27017/Booking",
     "OWNER_PASSWORD": "$2a$10$QhYFdAemDjroF8j6pbChSuxUf8g2dnhYdjzzkSobB0gI8D..EVZDW",
     "POSSIBLE": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
@@ -11,7 +11,7 @@
     "PAYLOAD_AUTH": "auth"
   },
   "development":{
-    "PORT":3000,
+    "PORT":9000,
     "MONGODB_URI": "mongodb://jrula:040993jrula@ds339177.mlab.com:39177/booking",
     "OWNER_PASSWORD": "$2a$10$QhYFdAemDjroF8j6pbChSuxUf8g2dnhYdjzzkSobB0gI8D..EVZDW",
     "POSSIBLE": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",

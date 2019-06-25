@@ -59,8 +59,8 @@ const styles = theme => ({
     }
 })
 
-//todo Add addtocart method
-const Products =(props)=> {
+
+const Rooms =(props)=> {
         const {classes} = props
 
         return (
@@ -84,10 +84,10 @@ const Products =(props)=> {
             </div>)
 
 }
-Products.propTypes = {
+Rooms.propTypes = {
     classes: PropTypes.object.isRequired,
     searchResults: PropTypes.array.isRequired,
     searched: PropTypes.bool.isRequired
 }
 
-export default withStyles(styles)(Products)
+export default withStyles(styles)(Rooms)

@@ -10,7 +10,7 @@ import PropTypes from 'prop-types'
 import {withStyles} from '@material-ui/core/styles'
 import {loadOpenedReservations, signin} from '../api/api-user'
 import Redirect from "react-router-dom/es/Redirect";
-import {loadRoomWithReservations} from "../api/api-reservation";
+
 
 
 const styles = theme => ({
@@ -70,7 +70,10 @@ class Signin extends Component {
             } else {
                 this.state.slug = user.slug = response.slug;
                 this.state.role = response.slug;
-
+                const loggin={};
+                loggin.name='name';
+                console.log(loggin)
+                localStorage.setItem('logIn', JSON.stringify(loggin))
                 this.setState({redirectToReferrer: true});
 
                 loadOpenedReservations().then((data) => {
@@ -78,8 +81,11 @@ class Signin extends Component {
                         if (typeof window !== 'undefined') {
                             localStorage.setItem('reservation', JSON.stringify(data[0].reservation_table))
                             localStorage.setItem('cart', JSON.stringify(data[0].room_table))
+
                         }
                     }
+                    else
+                    console.log(data.error)
                 })
                 this.props.slugCallback({slug: user.slug, role: response.role});
             }

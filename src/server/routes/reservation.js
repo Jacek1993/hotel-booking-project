@@ -102,7 +102,6 @@ router.put('/change', authenticate, async (req, res) => {
     }
 });
 
-//ten request jest niezabiespieczony w sensie jesli chcemy go otworzyc w przegladarce nie mozemy dac autentykacji
 router.get('/:slug', authenticate, async (req, res) => {
 
     console.log(req.params.slug);

@@ -1,8 +1,5 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
-import {withStyles} from '@material-ui/core/styles'
-import Button from '@material-ui/core/Button'
-import {Link} from 'react-router-dom'
 import AppBar from '@material-ui/core/AppBar'
 import Typography from '@material-ui/core/Typography'
 import Tabs from '@material-ui/core/Tabs'
