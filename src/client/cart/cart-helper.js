@@ -96,12 +96,12 @@ const cart = {
 
         }
     },
-    emptyCart(next) {
+    emptyCart() {
         if (typeof window !== 'undefined') {
             localStorage.removeItem('reservation');
             localStorage.removeItem('cart');
         }
-        next();
+
     }
 }
 

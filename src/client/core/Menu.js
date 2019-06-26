@@ -41,7 +41,14 @@ class MenuShow extends Component {
 
     componentDidMount() {
         isAuthenticated(this);
-
+        this.setState({role: this.props.role})
+        console.log(this.state.role)
+    }
+    componentWillReceiveProps(nextProps){
+        if(nextProps.slug!==''){
+            this.setState({slug: nextProps.slug})
+            this.setState({role: nextProps.role})
+        }
     }
 
     submit = () => {
@@ -50,7 +57,7 @@ class MenuShow extends Component {
                 this.setState({redirectToHome: true})
             }
         })
-        cart.emptyCart(()=>this.setState({status: false}));
+        cart.emptyCart();
         localStorage.removeItem('logIn')
     };
 
